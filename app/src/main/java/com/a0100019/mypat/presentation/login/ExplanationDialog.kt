@@ -156,10 +156,10 @@ fun ExplanationDialog(
 
                     // 불렛 포인트 스타일로 가독성 업그레이드
                     val items = listOf(
-                        "매일 일기를 작성해 햇살을 모으고, 하루 미션과 펫을 통해 달빛을 모아보세요.",
+                        "매일 일기를 작성해 3 햇살을 모으고, 하루 미션과 펫을 통해 달빛을 모아보세요.",
                         "모은 햇살과 달빛으로 상점에서 귀여운 펫과 아이템을 가질 수 있어요.",
-                        "마을 꾸미기에서 나만의 마을을 꾸며보아요.",
-                        "그 외에 다양한 커뮤니티 기능을 통해 이웃들과 소통하고, 펫을 키우며 바쁜 하루를 힐링해요"
+                        "마을 꾸미기에서 나만의 마을을 꾸미고, 펫을 키우며 바쁜 하루를 힐링해요",
+                        "마을을 꾸미고 펫을 키우기 위한 기능을 계속 업데이트 중이니 기대해주세요!",
                     )
 
                     items.forEach { text ->
@@ -261,7 +261,7 @@ fun ExplanationDialog(
                                 ) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                         Text(
-                                            text = "자유롭게 기능들을 둘러보아요!",
+                                            text = "자유롭게 마을을 둘러보아요!",
                                             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                                             color = Color(0xFF2F6F62)
                                         )

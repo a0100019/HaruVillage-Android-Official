@@ -232,7 +232,8 @@ class BoardMessageViewModel @Inject constructor(
                 type = snap.getString("type") ?: "",
                 anonymous = snap.getString("anonymous") ?: "",
                 photoFirebaseUrl = snap.getString("photoFirebaseUrl") ?: "0",
-                photoLocalPath = snap.getString("photoLocalPath") ?: "0"
+                photoLocalPath = snap.getString("photoLocalPath") ?: "0",
+                like = snap.getLong("like")?.toInt() ?: 0,
             )
 
             /* ---------------------------
@@ -456,6 +457,33 @@ class BoardMessageViewModel @Inject constructor(
                 clickPhoto = path
             )
         }
+    }
+
+    fun onLikeClick() = intent {
+        // 1. 현재 게시글의 타임스탬프(문서 ID) 가져오기
+        val userDataList = userDao.getAllUserData()
+        val boardTimestamp = userDataList.find { it.id == "etc2" }?.value3 ?: return@intent
+
+        val boardRef = Firebase.firestore
+            .collection("chatting")
+            .document("board")
+            .collection("board")
+            .document(boardTimestamp)
+
+        // 2. 파이어베이스 서버의 좋아요 수 +1 (트랜잭션 없이도 안전하게 증가)
+        boardRef.update("like", FieldValue.increment(1))
+            .addOnSuccessListener {
+                Log.d("LikeClick", "좋아요 증가 성공")
+            }
+            .addOnFailureListener { e ->
+                Log.e("LikeClick", "좋아요 증가 실패: ${e.message}")
+            }
+
+        /* 참고: 현재 loadBoardMessage()에서 addSnapshotListener를 통해
+           실시간으로 데이터를 구독하고 있기 때문에,
+           서버 값이 바뀌면 자동으로 state.boardData의 like도 업데이트됩니다.
+           따라서 별도의 reduce 로직을 넣지 않아도 화면에 즉시 반영될 거예요!
+        */
     }
 
 }

@@ -16,8 +16,8 @@ android {
         applicationId = "com.a0100019.mypat"
         minSdk = 26
         targetSdk = 35
-        versionCode = 28
-        versionName = "26.10"
+        versionCode = 29
+        versionName = "26.11"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -152,5 +152,9 @@ dependencies {
     // 구글 플레이 인앱 리뷰 라이브러리
     implementation("com.google.android.play:review:2.0.1")
     implementation("com.google.android.play:review-ktx:2.0.1") // Kotlin 확장 라이브러리
+
+    //gemini ai
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 
 }

@@ -84,7 +84,7 @@ fun BoardSubmitDialog(
         "free" to "자유",
         "worry" to "고민",
         "congratulation" to "축하",
-        "friend" to "친구 구하기"
+        "friend" to "친구"
     )
 
     Dialog(onDismissRequest = {}) {

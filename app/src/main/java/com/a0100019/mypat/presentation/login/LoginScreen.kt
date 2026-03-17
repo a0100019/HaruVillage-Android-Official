@@ -113,6 +113,11 @@ fun LoginScreen(
                     popUpTo(MainRoute.LoginScreen.name) { inclusive = true } // 뒤로가기 방지
                 }
             }
+            is LoginSideEffect.NavigateToFirstScreen -> {
+                navController.navigate(MainRoute.FirstScreen.name) {
+                    popUpTo(MainRoute.LoginScreen.name) { inclusive = true } // 뒤로가기 방지
+                }
+            }
         }
     }
 
@@ -147,6 +152,7 @@ fun LoginScreen(
         reLoading = loginViewModel::reLoading,
         onGuestLoginClick = loginViewModel::onGuestLoginClick,
         onNavigateToDiaryScreen = loginViewModel::onNavigateToDiaryScreen,
+        onNavigateToFirstScreen = loginViewModel::onNavigateToFirstScreen,
         todayAttendance = loginViewModel::todayAttendance,
 
         googleLoginClick = {
@@ -183,6 +189,7 @@ fun isInternetAvailable(context: Context): Boolean {
 fun LoginScreen(
     googleLoginClick: () -> Unit,
     onNavigateToMainScreen: () -> Unit,
+    onNavigateToFirstScreen: () -> Unit = {},
     dialogChange: (String) -> Unit = {},
     reLoading: () -> Unit = {},
     onGuestLoginClick: () -> Unit = {},
@@ -215,7 +222,7 @@ fun LoginScreen(
             LoginTutorialDialog(
                 onClose = {
                     todayAttendance()
-                    onNavigateToDiaryScreen()
+                    onNavigateToFirstScreen()
                 }
             )
         }

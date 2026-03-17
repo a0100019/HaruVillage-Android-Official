@@ -42,6 +42,7 @@ fun LoadingContainerScreen(
         situation = loadingState.situation,
 
         onClose = loadingViewModel::onClose,
+        onSituationChangeClick = loadingViewModel::onSituationChange,
         popBackStack = popBackStack
     )
 }
@@ -52,6 +53,7 @@ fun LoadingScreen(
 
     onClose : () -> Unit = {},
     popBackStack: () -> Unit = {},
+    onSituationChangeClick: (String) -> Unit = {},
 ) {
     Surface(
         modifier = Modifier

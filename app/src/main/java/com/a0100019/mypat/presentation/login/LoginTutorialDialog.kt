@@ -93,7 +93,7 @@ fun LoginTutorialDialog(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "시작하기",
+                    text = "하루마을 초대장",
                     style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight = FontWeight.ExtraBold,
                         letterSpacing = 4.sp, // 자간을 넓혀 고급스럽게
@@ -115,9 +115,11 @@ fun LoginTutorialDialog(
                 // 텍스트 영역: 행간과 폰트 크기 미세 조정
                 Text(
                     text = "하루마을에 오신 것을 환영합니다!\n\n" +
-                            "오늘 무심코 적은 일기 한 줄은, 훗날 꺼내볼 수 있는 소중한 보물이 될 거에요\n\n" +
-                            "매일 일기를 작성할 수 있도록 하루마을이 도와드릴게요.\n\n" +
-                            "가장 먼저 오늘의 일기를 작성한 후, 마을을 둘러볼까요?",
+                            "이곳에는 이웃들과 소통하는 [게시판], 하루의 기록을 남기는 [일기장], \n" +
+                            "나만의 귀여운 마을을 꾸미는 [마을 키우기]가 준비되어 있어요.\n" +
+                            "\n" +
+                            "모든 기능을 다 쓰지 않아도 괜찮아요.\n당신이 머물고 싶은 방식 그대로,\n" +
+                            "하루마을에서 잠시 쉬어가세요.\n자, 이제 함께 시작해 볼까요?",
                     style = MaterialTheme.typography.bodyLarge.copy(
                         lineHeight = 26.sp,
                         fontWeight = FontWeight.Medium,
@@ -189,7 +191,7 @@ fun LoginTutorialDialog(
                             )
 
                             Text(
-                                text = "소중한 하루 기록하기",
+                                text = "시작하기",
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.ExtraBold,
                                     letterSpacing = (-0.3).sp

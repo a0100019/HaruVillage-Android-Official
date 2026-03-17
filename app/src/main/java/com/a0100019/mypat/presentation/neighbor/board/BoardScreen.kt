@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,6 +58,7 @@ fun BoardScreen(
     onNavigateToBoardMessageScreen: () -> Unit = {},
     onNavigateToMainScreen: () -> Unit = {},
     onNavigateToNeighborScreen: () -> Unit = {},
+    onNavigateToFirstScreen: () -> Unit = {},
 
     popBackStack: () -> Unit = {},
 
@@ -97,6 +100,8 @@ fun BoardScreen(
 //        onAdClick = boardViewModel::onAdClick,
         onBoardSubmitClick = boardViewModel::onBoardSubmitClick,
         onNavigateToNeighborScreen = onNavigateToNeighborScreen,
+        onPageAddClick = boardViewModel::onPageAddClick,
+        onNavigateToFirstScreen = onNavigateToFirstScreen,
 
         onImageSelected = { uri ->
             // ✅ 여기서 뷰모델 호출!
@@ -130,6 +135,8 @@ fun BoardScreen(
     onAdClick: () -> Unit = {},
     onBoardSubmitClick: () -> Unit = {},
     onNavigateToNeighborScreen: () -> Unit = {},
+    onPageAddClick: () -> Unit = {},
+    onNavigateToFirstScreen: () -> Unit = {},
 
     onImageSelected: (Uri) -> Unit = {}, // ✅ 사진 선택 콜백 추가
     isPhotoLoading: Boolean = false,
@@ -162,7 +169,7 @@ fun BoardScreen(
             onDismissClick = {
                 onSituationChange("boardSubmit")
             },
-            text = "하루마을은 평화로운 커뮤니티를 지향하며, 전체 이용가인 만큼 부적절한 내용은 삼가해 주시기 바랍니다.\n\n게시글을 작성하겠습니까?",
+            text = "힐링 커뮤니티 하루마을을 위해 고운 말을 사용해 주세요.\n\n게시글을 작성하겠습니까?",
         )
 
         "boardSubmitConfirm" -> BoardSubmitConfirmDialog(
@@ -188,13 +195,6 @@ fun BoardScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(
-                text = "자유게시판",
-                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.padding(bottom = 12.dp)
-            )
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -208,20 +208,26 @@ fun BoardScreen(
                         .clickable { onSituationChange("boardSubmit") }
                 )
 
-                MainButton(
-                    onClick = {
-                        if (situation == "myBoard") onSituationChange("")
-                        else onSituationChange("myBoard")
-                    },
-                    text = if (situation == "myBoard") "내 게시물" else "전체 게시물"
+                Text(
+                    text = "자유게시판",
+                    style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onBackground,
                 )
+
+//                MainButton(
+//                    onClick = {
+//                        if (situation == "myBoard") onSituationChange("")
+//                        else onSituationChange("myBoard")
+//                    },
+//                    text = if (situation == "myBoard") "내 게시물" else "전체 게시물"
+//                )
 
                 JustImage(
                     filePath = "etc/exit.png",
                     modifier = Modifier
                         .size(30.dp)
                         .clickable {
-                            onNavigateToNeighborScreen()
+                            onNavigateToFirstScreen()
                         }
                 )
             }
@@ -324,7 +330,7 @@ fun BoardScreen(
                                     val typeText = when (message.type) {
                                         "congratulation" -> "축하"
                                         "worry" -> "고민"
-                                        "friend" -> "친구 구해요"
+                                        "friend" -> "친구"
                                         else -> "자유"
                                     }
 
@@ -333,6 +339,21 @@ fun BoardScreen(
                                         fontSize = 12.sp,
                                         color = Color(0xFF888888)
                                     )
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            // 하트나 새싹으로 변경 추천!
+                                            text = "🧡 ${message.like}",
+                                            fontSize = 12.sp,
+                                            style = TextStyle(
+                                                fontWeight = FontWeight.Medium,
+                                                // 하트라면 살짝 붉은 기가 도는 회색이 예뻐요
+                                                color = Color(0xFF9E9E9E)
+                                            )
+                                        )
+                                    }
 
                                     Spacer(modifier = Modifier.width(8.dp))
 
@@ -396,13 +417,59 @@ fun BoardScreen(
                     }
                 }
 
-                if(boardMessages.isEmpty()){
+                if (boardMessages.isEmpty()) {
                     item {
-                        Text(
-                            text = "로딩중..",
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 100.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                // 부드러운 원형 로딩바 (하루마을 메인 색상으로 바꿔주세요!)
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(36.dp),
+                                    color = Color(0xFF88ABFF), // 예시 색상
+                                    strokeWidth = 3.dp
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Text(
+                                    text = "마을 소식을 가져오고 있어요..",
+                                    style = TextStyle(
+                                        color = Color.Gray,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 24.dp, horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Surface(
+                                onClick = { onPageAddClick() },
+                                shape = RoundedCornerShape(12.dp),
+                                color = Color(0xFFF2F4F7), // 연한 회색 배경
+                                modifier = Modifier.fillMaxWidth(0.8f) // 버튼 너비 조절
+                            ) {
+                                Text(
+                                    text = "이전 소식 더보기",
+                                    modifier = Modifier.padding(vertical = 14.dp),
+                                    style = TextStyle(
+                                        color = Color(0xFF555555),
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
             }

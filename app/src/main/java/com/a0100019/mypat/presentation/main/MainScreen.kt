@@ -104,7 +104,8 @@ fun MainScreen(
     onPrivateRoomNavigateClick: () -> Unit,
     onNeighborNavigateClick: () -> Unit = {},
     onDiaryNavigateClick: () -> Unit = {},
-    onActivityNavigateClick: () -> Unit = {}
+    onActivityNavigateClick: () -> Unit = {},
+    onNavigateToFirstScreen: () -> Unit = {}
 
     ) {
 
@@ -162,6 +163,7 @@ fun MainScreen(
         onNeighborNavigateClick = onNeighborNavigateClick,
         onDiaryNavigateClick = onDiaryNavigateClick,
         onActivityNavigateClick = onActivityNavigateClick,
+        onNavigateToFirstScreen = onNavigateToFirstScreen,
 
         onLetterReadClick = mainViewModel::onLetterReadClick,
         onLetterLinkClick = mainViewModel::onLetterLinkClick,
@@ -215,6 +217,7 @@ fun MainScreen(
     onPrivateRoomNavigateClick: () -> Unit = {},
     onDiaryNavigateClick: () -> Unit = {},
     onActivityNavigateClick: () -> Unit = {},
+    onNavigateToFirstScreen: () -> Unit = {},
 
     dialogPatIdChange: (String) -> Unit,
     onLetterReadClick: () -> Unit = {},
@@ -350,13 +353,12 @@ fun MainScreen(
                 ) {
 
                     JustImage(
-                        filePath = "etc/cog.png",
+                        filePath = "etc/switch.png",
                         modifier = Modifier
-                            .size(25.dp)
+                            .size(30.dp)
                             .clickable {
-                                onSettingNavigateClick()
+                                onExitClick()
                             }
-                        ,
                     )
 
                     // 1. 아이콘 애니메이션을 위한 Transition
@@ -452,11 +454,11 @@ fun MainScreen(
                     }
 
                     JustImage(
-                        filePath = "etc/switch.png",
+                        filePath = "etc/exit.png",
                         modifier = Modifier
                             .size(30.dp)
                             .clickable {
-                                onSituationChange("exit")
+                                onNavigateToFirstScreen()
                             }
                     )
 
@@ -557,61 +559,6 @@ fun MainScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-
-                // --- 3. 커뮤니티 (싱그러운 민트-그린 테마) ---
-                Surface(
-                    onClick = { onNeighborNavigateClick() },
-                    modifier = Modifier.weight(1f).height(100.dp),
-                    shape = RoundedCornerShape(28.dp),
-                    color = Color(0xFFE0F2F1), // 연한 민트
-                    border = BorderStroke(2.5.dp, Color(0xFF4DB6AC)),
-                    shadowElevation = 6.dp
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text("🎈", fontSize = 28.sp)
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "커뮤니티",
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.ExtraBold,
-                                letterSpacing = (-0.5).sp
-                            ),
-                            color = Color(0xFF00695C)
-                        )
-                    }
-                }
-
-                // --- 2. 내 일기 (포근한 핑크-라벤더 테마) ---
-                Surface(
-                    onClick = { onDiaryNavigateClick() },
-                    modifier = Modifier.weight(1f).height(100.dp),
-                    shape = RoundedCornerShape(28.dp),
-                    color = Color(0xFFFCE4EC), // 연분홍
-                    border = BorderStroke(2.5.dp, Color(0xFFF06292)),
-                    shadowElevation = 6.dp
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text("📖", fontSize = 28.sp)
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "일기장",
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.ExtraBold,
-                                letterSpacing = (-0.5).sp
-                            ),
-                            color = Color(0xFF880E4F)
-                        )
-                    }
-                }
-
                 // --- 1. 마을 관리 (따스한 베이지-옐로우 테마) ---
                 Surface(
                     onClick = {
@@ -645,6 +592,35 @@ fun MainScreen(
                         )
                     }
                 }
+
+                // --- 3. 커뮤니티 (싱그러운 민트-그린 테마) ---
+                Surface(
+                    onClick = { onNeighborNavigateClick() },
+                    modifier = Modifier.weight(1f).height(100.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    color = Color(0xFFE0F2F1), // 연한 민트
+                    border = BorderStroke(2.5.dp, Color(0xFF4DB6AC)),
+                    shadowElevation = 6.dp
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("🎈", fontSize = 28.sp)
+                        Spacer(modifier = Modifier.height(6.dp))
+                        Text(
+                            text = "이웃",
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.ExtraBold,
+                                letterSpacing = (-0.5).sp
+                            ),
+                            color = Color(0xFF00695C)
+                        )
+                    }
+                }
+
+
 
             }
         }

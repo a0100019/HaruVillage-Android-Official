@@ -1,6 +1,5 @@
 package com.a0100019.mypat.presentation.neighbor.board
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -22,13 +21,13 @@ import com.a0100019.mypat.data.room.photo.PhotoDao
 import com.a0100019.mypat.data.room.user.User
 import com.a0100019.mypat.data.room.user.UserDao
 import com.a0100019.mypat.data.room.world.WorldDao
-import com.a0100019.mypat.presentation.diary.DiaryWriteSideEffect
 import com.a0100019.mypat.presentation.main.management.RewardAdManager
 import com.a0100019.mypat.presentation.main.management.addMedalAction
 import com.a0100019.mypat.presentation.main.management.getMedalActionCount
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
@@ -127,7 +126,7 @@ class BoardViewModel @Inject constructor(
     }
 
     fun loadBoardMessages() = intent {
-
+        val currentPage = state.page
         val myTag = userDao.getAllUserData()
             .find { it.id == "auth" }
             ?.value2
@@ -138,85 +137,91 @@ class BoardViewModel @Inject constructor(
             .document("board")
             .collection("board")
 
-        // 1️⃣ 전체 게시글 100개 (ban == "1" 제외)
-        boardRef
+        // 기본 쿼리 설정
+        var query = boardRef
             .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
-            .limit(50)
-            .get()
-            .addOnSuccessListener { snapshot ->
+            .limit(10)
 
-                val boardMessages = snapshot.documents.mapNotNull { doc ->
-                    val timestamp = doc.id.toLongOrNull() ?: return@mapNotNull null
-                    val data = doc.data ?: return@mapNotNull null
+        // 1️⃣ 페이지가 1보다 크면, 현재 리스트의 마지막 아이템 이후부터 가져옴
+        if (currentPage > 1 && state.boardMessages.isNotEmpty()) {
+            // 마지막 메시지의 timestamp(문서 ID)를 기준으로 커서 설정
+            val lastMessageId = state.boardMessages.first().timestamp.toString() // 내림차순이므로 가장 작은(오래된) 값
+            query = query.startAfter(lastMessageId)
+        }
 
-                    val ban = data["ban"] as? String ?: "0"
-                    if (ban == "1") return@mapNotNull null  // 🔥 차단된 글 제외
+        query.get().addOnSuccessListener { snapshot ->
+            val newBoardMessages = snapshot.documents.mapNotNull { doc ->
+                val timestamp = doc.id.toLongOrNull() ?: return@mapNotNull null
+                val data = doc.data ?: return@mapNotNull null
 
-                    BoardMessage(
-                        timestamp = timestamp,
-                        message = data["message"] as? String ?: "",
-                        name = data["name"] as? String ?: "알수없음",
-                        tag = data["tag"] as? String ?: "",
-                        ban = ban,
-                        uid = data["uid"] as? String ?: "",
-                        type = data["type"] as? String ?: "free",
-                        anonymous = data["anonymous"] as? String ?: "0",
-                        answerCount = (data["answer"] as? Map<*, *>)?.size ?: 0,
-                        photoFirebaseUrl = data["photoFirebaseUrl"] as? String ?: "0",
-                        photoLocalPath = data["photoLocalPath"] as? String ?: "0",
-                        )
-                }.sortedBy { it.timestamp }
+                if (data["ban"] == "1") return@mapNotNull null
 
-                // 2️⃣ 내 게시글 전부 (ban == "1" 제외)
-                boardRef
-                    .whereEqualTo("tag", myTag)
-                    .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
-                    .get()
-                    .addOnSuccessListener { mySnapshot ->
+                BoardMessage(
+                    timestamp = timestamp,
+                    message = data["message"] as? String ?: "",
+                    name = data["name"] as? String ?: "알수없음",
+                    tag = data["tag"] as? String ?: "",
+                    ban = "0",
+                    uid = data["uid"] as? String ?: "",
+                    type = data["type"] as? String ?: "free",
+                    anonymous = data["anonymous"] as? String ?: "0",
+                    answerCount = (data["answer"] as? Map<*, *>)?.size ?: 0,
+                    photoFirebaseUrl = data["photoFirebaseUrl"] as? String ?: "0",
+                    photoLocalPath = data["photoLocalPath"] as? String ?: "0",
+                    like = (data["like"] as? Long)?.toInt() ?: 0
+                )
+            }.sortedBy { it.timestamp } // 화면 표시를 위해 오름차순 정렬
 
-                        val myBoardMessages = mySnapshot.documents.mapNotNull { doc ->
-                            val timestamp = doc.id.toLongOrNull() ?: return@mapNotNull null
-                            val data = doc.data ?: return@mapNotNull null
+            // 2️⃣ 내 게시글은 중복 과금을 막기 위해 전체 글 쿼리가 끝난 후 합치거나 별도 관리
+            // (페이지네이션 시 매번 내 글 전체를 새로 고침할지 결정이 필요합니다)
 
-                            val ban = data["ban"] as? String ?: "0"
-                            if (ban == "1") return@mapNotNull null  // 🔥 차단된 글 제외
-
-                            BoardMessage(
-                                timestamp = timestamp,
-                                message = data["message"] as? String ?: "",
-                                name = data["name"] as? String ?: "알수없음",
-                                tag = data["tag"] as? String ?: "",
-                                ban = ban,
-                                uid = data["uid"] as? String ?: "",
-                                type = data["type"] as? String ?: "free",
-                                anonymous = data["anonymous"] as? String ?: "0",
-                                answerCount = (data["answer"] as? Map<*, *>)?.size ?: 0,
-                                photoFirebaseUrl = data["photoFirebaseUrl"] as? String ?: "0",
-                                photoLocalPath = data["photoLocalPath"] as? String ?: "0",
-                            )
-                        }.sortedBy { it.timestamp }
-
-                        intent {
-                            reduce {
-                                state.copy(
-                                    boardMessages = boardMessages,
-                                    myBoardMessages = myBoardMessages
-                                )
-                            }
-                        }
+            intent {
+                reduce {
+                    val updatedList = if (currentPage == 1) {
+                        newBoardMessages // 1페이지면 새로 시작
+                    } else {
+                        // 🔥 중요: 새 데이터(더 과거)를 '앞'에 추가
+                        newBoardMessages + state.boardMessages
                     }
+
+                    state.copy(
+                        boardMessages = updatedList
+                    )
+                }
             }
-            .addOnFailureListener { e ->
-                Log.e("BoardViewModel", "보드 메시지 로드 실패", e)
-            }
+        }
     }
 
 
     fun onBoardMessageClick(boardTimestamp: String) = intent {
-
+        // 1. 로컬 DB 업데이트
         userDao.update(id = "etc2", value3 = boardTimestamp)
-        postSideEffect(BoardSideEffect.NavigateToBoardMessageScreen)
 
+        // 2. 리스트 내에서 해당 게시물만 찾아 like 값을 +1 하여 state 업데이트
+        reduce {
+            state.copy(
+                boardMessages = state.boardMessages.map { message ->
+                    if (message.timestamp.toString() == boardTimestamp) {
+                        // 해당 게시물만 like를 1 증가시킴
+                        message.copy(like = message.like + 1)
+                    } else {
+                        // 나머지는 그대로 유지
+                        message
+                    }
+                }
+            )
+        }
+
+        // 3. 서버(Firebase)에도 반영 (나중에 상세화면에서 다시 불러와도 유지되도록)
+        Firebase.firestore
+            .collection("chatting")
+            .document("board")
+            .collection("board")
+            .document(boardTimestamp)
+            .update("like", FieldValue.increment(1))
+
+        // 4. 화면 이동
+        postSideEffect(BoardSideEffect.NavigateToBoardMessageScreen)
     }
 
     fun onBoardTypeChange(type: String) = intent {
@@ -280,7 +285,8 @@ class BoardViewModel @Inject constructor(
             "type" to state.boardType,
             "anonymous" to state.boardAnonymous,
             "photoFirebaseUrl" to state.photoFirebaseUrl,
-            "photoLocalPath" to state.photoLocalPath
+            "photoLocalPath" to state.photoLocalPath,
+            "like" to 0
         )
 
         Firebase.firestore
@@ -568,6 +574,15 @@ class BoardViewModel @Inject constructor(
 
     }
 
+    fun onPageAddClick() = intent {
+        reduce {
+            state.copy(
+                page = state.page + 1
+            )
+        }
+        loadBoardMessages()
+    }
+
 }
 
 @Immutable
@@ -587,7 +602,9 @@ data class BoardState(
     val boardAnonymous: String = "0",
     val removeAd: String = "0",
     val isSubmitting: Boolean = false,
+    val page: Int = 1,
 
+    //photo
     val photoDataList: List<Photo> = emptyList(),
     val isPhotoLoading: Boolean = false, // 로딩 상태 추가
     val photoFirebaseUrl: String = "0",
@@ -606,7 +623,8 @@ data class BoardMessage(
     val anonymous: String = "0",
     val answerCount: Int = 0,
     val photoFirebaseUrl: String = "0",
-    val photoLocalPath: String = "0"
+    val photoLocalPath: String = "0",
+    val like: Int = 0
 )
 
 //상태와 관련없는 것

@@ -795,6 +795,10 @@ class LoginViewModel @Inject constructor(
         postSideEffect(LoginSideEffect.NavigateToDiaryScreen)
     }
 
+    fun onNavigateToFirstScreen() = intent {
+        postSideEffect(LoginSideEffect.NavigateToFirstScreen)
+    }
+
     fun dialogChange(string: String) = intent {
         reduce {
             state.copy(
@@ -949,7 +953,7 @@ class LoginViewModel @Inject constructor(
 
         Log.e("ManagementViewModel", "데이터 로드 완료")
 
-        postSideEffect(LoginSideEffect.NavigateToDiaryScreen)
+        postSideEffect(LoginSideEffect.NavigateToFirstScreen)
 
     }
 
@@ -970,5 +974,7 @@ sealed interface LoginSideEffect{
     class Toast(val message:String): LoginSideEffect
     data object NavigateToMainScreen: LoginSideEffect
     data object NavigateToDiaryScreen: LoginSideEffect
+    data object NavigateToFirstScreen: LoginSideEffect
+
 
 }

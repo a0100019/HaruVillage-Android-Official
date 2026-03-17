@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -34,15 +35,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.a0100019.mypat.R
 import com.a0100019.mypat.data.room.letter.Letter
@@ -284,43 +291,42 @@ fun SettingScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
             Divider()
-            Spacer(modifier = Modifier.height(12.dp))
 
             // 기능 관련
-            MainButton(
+            SettingButton(
                 text = "우체통",
                 onClick = { onSituationChange("letter") },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            MainButton(
+            SettingButton(
                 text = "대나무 숲",
                 onClick = { onSituationChange("settingTalk") },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            MainButton(
+            SettingButton(
                 text = "응원하고 보상받기",
                 onClick = { onSituationChange("review") },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            MainButton(
+            SettingButton(
                 text = "글씨체 변경하기",
                 onClick = { onSituationChange("font") },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(3.dp))
             Divider()
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(3.dp))
 
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
             ){
                 // 기타 정보
-                MainButton(
+                SettingButton(
                     text = "이용약관",
                     onClick = { onSituationChange("terms") },
                     modifier = Modifier.weight(1f)
@@ -328,7 +334,7 @@ fun SettingScreen(
 
                 Spacer(modifier = Modifier.size(12.dp))
 
-                MainButton(
+                SettingButton(
                     text = "쿠폰 코드",
                     onClick = { onSituationChange("coupon") },
                     modifier = Modifier.weight(1f)
@@ -344,7 +350,7 @@ fun SettingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
             ){
-                MainButton(
+                SettingButton(
                     text = "추천인 확인",
                     onClick = onRecommendationClick,
                     modifier = Modifier.weight(1f)
@@ -352,7 +358,7 @@ fun SettingScreen(
 
                 Spacer(modifier = Modifier.size(12.dp))
 
-                MainButton(
+                SettingButton(
                     text = "방명록",
                     onClick = { onSituationChange("donation") },
                     modifier = Modifier.weight(1f)
@@ -372,7 +378,7 @@ fun SettingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
             ){
-                MainButton(
+                SettingButton(
                     text = "bgm 켜기 / 끄기",
                     onClick = {
                         if (bgmOn) {
@@ -390,7 +396,7 @@ fun SettingScreen(
 
                 Spacer(modifier = Modifier.size(12.dp))
 
-                MainButton(
+                SettingButton(
                     text = "설명서",
                     onClick = { onSituationChange("explanation") },
                     modifier = Modifier.weight(1f)
@@ -403,15 +409,15 @@ fun SettingScreen(
             ){
 
                 if(userData.find { it.id == "selectPat" }?.value3 == "0"){
-                    MainButton(
+                    SettingButton(
                         text = "계정삭제",
                         onClick = { onSituationChange("accountDelete") },
-                        modifier = Modifier.weight(0.5f)
+                        modifier = Modifier.weight(1f)
                     )
 
                     Spacer(modifier = Modifier.size(12.dp))
 
-                    MainButton(
+                    SettingButton(
                         text = "로그아웃",
                         onClick = onSignOutClick,
                         modifier = Modifier.weight(1f)
@@ -445,7 +451,7 @@ fun SettingScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(3.dp))
             Divider()
 
             Box(
@@ -458,6 +464,70 @@ fun SettingScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SettingButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    containerColor: Color = Color.White, // 깔끔한 화이트
+    contentColor: Color = Color(0xFF212529), // 깊이감 있는 다크 그레이
+    iconPath: String? = null
+) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(16.dp),
+        color = containerColor,
+        // 미세한 그림자(Elevation)를 추가해 버튼임을 명확히 함
+        shadowElevation = 2.dp,
+        // 테두리를 아주 연하게 주어 고급스러움 추가
+        border = BorderStroke(1.dp, Color(0xFFF1F3F5)),
+        modifier = modifier
+            .fillMaxWidth() // 보통 설정 버튼은 가득 차는 게 예뻐요
+            .height(60.dp)  // 살짝 더 시원하게 높이 조절
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start // 텍스트는 보통 왼쪽 정렬이 국룰!
+        ) {
+            if (iconPath != null) {
+                // 아이콘 배경에 원형 칩 효과를 주면 훨씬 예뻐요
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .background(Color(0xFFF8F9FA), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    JustImage(
+                        filePath = iconPath,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+
+            Text(
+                text = text,
+                modifier = Modifier.weight(1f), // 텍스트가 공간을 다 차지하게 해서
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold, // 조금 더 두껍게
+                    color = contentColor
+                )
+            )
+
+            // 오른쪽에 '>' 모양의 화살표를 넣어주면 "누를 수 있음"을 직관적으로 알려줘요
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowRight,
+                contentDescription = null,
+                tint = Color(0xFFADB5BD),
+                modifier = Modifier.size(24.dp)
+            )
         }
     }
 }

@@ -33,6 +33,7 @@ import com.a0100019.mypat.presentation.neighbor.privateChat.PrivateChatGameScree
 import com.a0100019.mypat.presentation.neighbor.privateChat.PrivateChatInScreen
 import com.a0100019.mypat.presentation.neighbor.privateChat.PrivateRoomScreen
 import com.a0100019.mypat.presentation.activity.store.BillingManager
+import com.a0100019.mypat.presentation.first.FirstContainerScreen
 
 @Composable
 fun MainNavHost(
@@ -94,6 +95,13 @@ fun MainNavHost(
                 onActivityNavigateClick = {
                     navController.navigate(route = MainRoute.ActivityScreen.name)
                 },
+                onNavigateToFirstScreen = {
+                    navController.navigate(route = MainRoute.FirstScreen.name) {
+                        popUpTo(0) { inclusive = true } // 백스택 전체 제거
+                        launchSingleTop = true // 같은 화면 여러 번 안 쌓이게
+                    }
+                }
+                ,
 
             )
         }
@@ -195,7 +203,13 @@ fun MainNavHost(
                 popBackStack = { navController.popBackStack() },
                 onNavigateToSettingScreen = {
                     navController.navigate(route = MainRoute.SettingScreen.name)
-                }
+                },
+                onNavigateToFirstScreen = {
+                    navController.navigate(route = MainRoute.FirstScreen.name) {
+                        popUpTo(0) { inclusive = true } // 백스택 전체 제거
+                        launchSingleTop = true // 같은 화면 여러 번 안 쌓이게
+                    }
+                },
             )
         }
 
@@ -342,6 +356,12 @@ fun MainNavHost(
                         launchSingleTop = true // 같은 화면 여러 번 안 쌓이게
                     }
                 },
+                onNavigateToFirstScreen = {
+                    navController.navigate(route = MainRoute.FirstScreen.name) {
+                        popUpTo(0) { inclusive = true } // 백스택 전체 제거
+                        launchSingleTop = true // 같은 화면 여러 번 안 쌓이게
+                    }
+                },
             )
         }
 
@@ -369,6 +389,33 @@ fun MainNavHost(
         composable(route = MainRoute.KnowledgeScreen.name) {
             KnowledgeScreen(
                 popBackStack = { navController.popBackStack() }
+            )
+        }
+
+        composable(route = MainRoute.FirstScreen.name) {
+            FirstContainerScreen(
+                popBackStack = { navController.popBackStack() },
+                onMainNavigateClick = {
+                    navController.navigate(route = MainRoute.MainScreen.name) {
+                        popUpTo(0) { inclusive = true } // 백스택 전체 제거
+                        launchSingleTop = true // 같은 화면 여러 번 안 쌓이게
+                    }
+                },
+                onDiaryNavigateClick = {
+                    navController.navigate(route = MainRoute.DiaryScreen.name) {
+                        popUpTo(0) { inclusive = true } // 백스택 전체 제거
+                        launchSingleTop = true // 같은 화면 여러 번 안 쌓이게
+                    }
+                },
+                onBoardNavigateClick = {
+                    navController.navigate(route = MainRoute.BoardScreen.name) {
+                        popUpTo(0) { inclusive = true } // 백스택 전체 제거
+                        launchSingleTop = true // 같은 화면 여러 번 안 쌓이게
+                    }
+                },
+                onSettingNavigateClick = {
+                    navController.navigate(route = MainRoute.SettingScreen.name)
+                },
             )
         }
 

@@ -120,7 +120,8 @@ fun DiaryScreen(
     onDiaryClick: () -> Unit,
     popBackStack: () -> Unit = {},
     onNavigateToMainScreen: () -> Unit,
-    onNavigateToSettingScreen: () -> Unit = {}
+    onNavigateToSettingScreen: () -> Unit = {},
+    onNavigateToFirstScreen: () -> Unit = {}
 ) {
 
     val diaryState: DiaryState = diaryViewModel.collectAsState().value
@@ -221,7 +222,8 @@ fun DiaryScreen(
         onExitClick = diaryViewModel::onExitClick,
         onDiaryAlarmChangeClick = diaryViewModel::onDiaryAlarmChangeClick,
         onCancelAlarmClick = diaryViewModel::onCancelAlarmClick,
-        onNavigateToSettingScreen = onNavigateToSettingScreen
+        onNavigateToSettingScreen = onNavigateToSettingScreen,
+        onNavigateToFirstScreen = onNavigateToFirstScreen
     )
 }
 
@@ -255,7 +257,8 @@ fun DiaryScreen(
     onDiaryAlarmChangeClick: (String) -> Unit = {},
     onCancelAlarmClick: () -> Unit = {},
     onNavigateToSettingScreen: () -> Unit = {},
-    clickPhotoChange: (String) -> Unit = {}
+    clickPhotoChange: (String) -> Unit = {},
+    onNavigateToFirstScreen: () -> Unit = {}
 ) {
 
     AppBgmManager.pause()
@@ -389,91 +392,33 @@ fun DiaryScreen(
                 contentAlignment = Alignment.Center
             ) {
 
-                JustImage(
-                    filePath = "etc/cog.png",
-                    modifier = Modifier
-                        .size(25.dp)
-                        .clickable {
-                            onNavigateToSettingScreen()
-                        }
-                        .align(Alignment.CenterStart)
-                    ,
-                )
+//                JustImage(
+//                    filePath = "etc/cog.png",
+//                    modifier = Modifier
+//                        .size(25.dp)
+//                        .clickable {
+//                            onNavigateToSettingScreen()
+//                        }
+//                        .align(Alignment.CenterStart)
+//                    ,
+//                )
 
-                Surface(
-                    onClick = onNavigateToMainScreen,
-                    // 1. 비대칭 곡률로 몽글몽글한 조약돌/젤리 느낌 연출
-                    shape = RoundedCornerShape(
-                        topStart = 24.dp,
-                        bottomEnd = 24.dp,
-                        topEnd = 12.dp,
-                        bottomStart = 12.dp
-                    ),
-                    color = Color(0xFFFFF9C4), // 따뜻한 버터 옐로우
-                    modifier = Modifier
-                        .height(52.dp) // 존재감 있는 높이
-                        .padding(horizontal = 6.dp),
-                    // 2. 테두리를 조금 더 도톰하고 부드러운 색상으로 설정
-                    border = BorderStroke(3.dp, Color(0xFFFFE082)),
-                    shadowElevation = 4.dp
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        Color(0xFFFFFEF9), // 상단 광택
-                                        Color(0xFFFFF9C4)  // 하단 베이스
-                                    )
-                                )
-                            )
-                            .padding(horizontal = 20.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        // 3. 아이콘에 살짝 '통통' 튀는 듯한 효과
-                        Box(
-                            modifier = Modifier
-                                .graphicsLayer {
-                                    rotationZ = -5f
-                                    scaleX = 1.1f
-                                    scaleY = 1.1f
-                                }
-                        ) {
-                            JustImage(
-                                filePath = "etc/home.png",
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        Text(
-                            text = "마을로 이동", // 조금 더 어린아이 같은 귀여운 말투
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                fontWeight = FontWeight.Black,
-                                letterSpacing = (-0.8).sp
-                            ),
-                            color = Color(0xFF6D4C41) // 진한 코코아 브라운
-                        )
-
-                        Spacer(modifier = Modifier.width(6.dp))
-
-                        // 4. 버튼 끝에 작은 포인트
-                        Text(
-                            text = "🐾",
-                            fontSize = 16.sp
-                        )
-                    }
-                }
-
-                // [오른쪽] 종료 버튼 (🚪 나가기 아이콘 스타일)
                 JustImage(
                     filePath = "etc/switch.png",
                     modifier = Modifier
                         .size(30.dp)
                         .clickable {
-                            onDialogStateChange("exit")
+                            onExitClick()
+                        }
+                        .align(Alignment.CenterStart)
+                )
+
+                JustImage(
+                    filePath = "etc/exit.png",
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable {
+                            onNavigateToFirstScreen()
                         }
                         .align(Alignment.CenterEnd)
                 )

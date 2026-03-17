@@ -1,6 +1,12 @@
 package com.a0100019.mypat.presentation.neighbor.board
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,8 +44,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -111,6 +120,7 @@ fun BoardMessageScreen(
         onNavigateToBoardScreen = onNavigateToBoardScreen,
         onBoardChatDelete = boardMessageViewModel::onBoardChatDelete,
         onNeighborInformationClick = boardMessageViewModel::onNeighborInformationClick,
+        onLikeClick = boardMessageViewModel::onLikeClick,
 
         photoDataList = boardMessageState.photoDataList,
         isPhotoLoading = boardMessageState.isPhotoLoading,
@@ -139,6 +149,7 @@ fun BoardMessageScreen(
     onNavigateToBoardScreen: () -> Unit = {},
     onBoardChatDelete: (String) -> Unit = {},
     onNeighborInformationClick: (String) -> Unit = {},
+    onLikeClick: () -> Unit = {},
 
     photoDataList: List<Photo> = emptyList(),
     isPhotoLoading: Boolean = false,
@@ -194,25 +205,61 @@ fun BoardMessageScreen(
                     )
                 }
 
-                // 📌 게시판 타입 뱃지
-                val (boardTitle, boardColor) = when (boardData.type) {
-                    "congratulation" -> "축하 게시판" to Color(0xFFFFF3E0)
-                    "worry" -> "고민 게시판" to Color(0xFFE3F2FD)
-                    "friend" -> "친구 구하기" to Color(0xFFFFEBEE)
-                    else -> "자유 게시판" to Color(0xFFF1F8E9)
-                }
+//                // 📌 게시판 타입 뱃지
+//                val (boardTitle, boardColor) = when (boardData.type) {
+//                    "congratulation" -> "축하 게시판" to Color(0xFFFFF3E0)
+//                    "worry" -> "고민 게시판" to Color(0xFFE3F2FD)
+//                    "friend" -> "친구 구하기" to Color(0xFFFFEBEE)
+//                    else -> "자유 게시판" to Color(0xFFF1F8E9)
+//                }
+//
+//                Box(
+//                    modifier = Modifier
+//                        .background(boardColor, RoundedCornerShape(8.dp))
+//                        .padding(horizontal = 8.dp, vertical = 4.dp)
+//                ) {
+//                    Text(
+//                        text = boardTitle,
+//                        fontSize = 13.sp,
+//                        fontWeight = FontWeight.SemiBold,
+//                        color = Color.DarkGray
+//                    )
+//                }
 
-                Box(
-                    modifier = Modifier
-                        .background(boardColor, RoundedCornerShape(8.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = boardTitle,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.DarkGray
-                    )
+// 1. 상태 관리 (보통 ViewModel이나 상위 컴포저블에서 관리하겠지만, 예시로 내부에 작성)
+                var isLikeTextVisible by remember { mutableStateOf(true) }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "🧡 ${boardData.like}")
+
+//                    AnimatedVisibility(
+//                        visible = isLikeTextVisible,
+//                        enter = fadeIn() + expandHorizontally(), // 나타날 때 효과
+//                        exit = fadeOut() + shrinkHorizontally()   // 사라질 때 효과
+//                    ) {
+//                        Row(verticalAlignment = Alignment.CenterVertically) {
+//                            Spacer(modifier = Modifier.width(8.dp))
+//
+//                            // 버튼처럼 보이는 Surface
+//                            Surface(
+//                                onClick = {
+//                                    onLikeClick()
+//                                    isLikeTextVisible = false
+//                                },
+//                                shape = RoundedCornerShape(12.dp), // 둥글둥글한 모양
+//                                color = Color(0xFFFFF4E5),        // 하트색과 어울리는 연한 주황빛 배경
+//                                border = BorderStroke(1.dp, Color(0xFFFFD8A8)) // 살짝 더 진한 테두리
+//                            ) {
+//                                Text(
+//                                    text = "좋아요 누르기",
+//                                    fontSize = 11.sp,              // 작고 소중하게
+//                                    fontWeight = FontWeight.Bold,
+//                                    color = Color(0xFFE67E22),     // 진한 주황색 글씨
+//                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp) // 버튼 안쪽 여백
+//                                )
+//                            }
+//                        }
+//                    }
                 }
 
                 JustImage(

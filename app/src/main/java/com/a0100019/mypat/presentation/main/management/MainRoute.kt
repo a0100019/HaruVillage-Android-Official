@@ -53,6 +53,8 @@ sealed class MainRoute(
 
     object ActivityScreen : MainRoute("ActivityScreen")
 
+    object FirstScreen : MainRoute("FirstScreen")
+
 }
 
 
