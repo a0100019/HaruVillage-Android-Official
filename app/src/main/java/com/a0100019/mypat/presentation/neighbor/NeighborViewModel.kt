@@ -41,7 +41,6 @@ class NeighborViewModel @Inject constructor(
             try {
                 val client = OkHttpClient()
                 // 유빈님이 넣으신 OpenAI 키
-                val apiKey = "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"
                 val url = "https://api.openai.com/v1/chat/completions"
 
                 val json = JSONObject().apply {
@@ -57,7 +56,7 @@ class NeighborViewModel @Inject constructor(
                 val body = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
                 val request = Request.Builder()
                     .url(url)
-                    .header("Authorization", "Bearer $apiKey")
+                    .header("Authorization", "Bearer")
                     .header("Content-Type", "application/json")
                     .post(body)
                     .build()

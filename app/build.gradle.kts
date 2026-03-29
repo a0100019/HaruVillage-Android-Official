@@ -95,7 +95,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-//아래부터 추가한 것
+    //아래부터 추가한 것
 
     implementation(libs.orbit.core)
     implementation(libs.orbit.compose)
@@ -156,5 +156,11 @@ dependencies {
     //gemini ai
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // Retrofit: 서버와 통신하는 핵심 라이브러리
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+
+    // Scalars Converter: 서버에서 주는 텍스트를 String으로 바로 받기 위해
+    implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
 }
