@@ -123,7 +123,6 @@ object RoomModule {
         }
     }
 
-
     // ===== DAO Providers =====
     @Provides fun provideUserDao(db: Database): UserDao = db.userDao()
     @Provides fun provideWalkDao(db: Database): WalkDao = db.walkDao()

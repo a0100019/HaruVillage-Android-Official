@@ -3,6 +3,7 @@ package com.a0100019.mypat.presentation.setting
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.a0100019.mypat.data.remote.NoticeService
 import com.a0100019.mypat.data.room.area.Area
 import com.a0100019.mypat.data.room.diary.Diary
 import com.a0100019.mypat.data.room.diary.DiaryDao
@@ -83,6 +84,8 @@ class SettingViewModel @Inject constructor(
     private val areaDao: AreaDao,
     private val knowledgeDao: KnowledgeDao,
     private val photoDao: PhotoDao,
+    private val noticeService: NoticeService, // Hilt로 주입받은 서비스
+
 ) : ViewModel(), ContainerHost<SettingState, SettingSideEffect> {
 
     override val container: Container<SettingState, SettingSideEffect> = container(
@@ -1159,6 +1162,42 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+    fun loadNotice() = intent {
+        // 1. 기존 공지 비우기 (로딩 느낌)
+        reduce {
+            state.copy(notice = "불러오는 중...")
+        }
+
+        try {
+            // 2. 실제 서버 통신
+            val fetchedNotice = noticeService.getNotice()
+
+            // 3. 성공 시 State 업데이트
+            reduce {
+                state.copy(
+                    notice = fetchedNotice,
+                    settingSituation = "notice"
+                )
+            }
+        } catch (e: Exception) {
+            // 4. 에러 발생 시: e.localizedMessage나 e.message를 사용합니다.
+            val errorMessage = e.localizedMessage ?: "알 수 없는 에러가 발생했습니다."
+
+            reduce {
+                state.copy(
+                    notice = "공지사항 로드 실패"
+                )
+            }
+
+            // 토스트 메시지에 실제 에러 원인을 포함시켜요!
+            postSideEffect(
+                SettingSideEffect.Toast("에러 발생")
+            )
+
+            // 로그캣에서도 자세히 볼 수 있게 로그를 남겨두면 더 좋아요.
+            Log.e("NoticeError", errorMessage, e)
+        }
+    }
 
 }
 
@@ -1184,7 +1223,8 @@ data class SettingState(
     val recommending: String = "-1",
     val recommended: String = "-1",
     val donationList: List<Donation> = emptyList(),
-    val knowledgeDataList: List<Knowledge> = emptyList()
+    val knowledgeDataList: List<Knowledge> = emptyList(),
+    val notice: String = "서버에서 받아오는 중.."
     )
 
 @Immutable

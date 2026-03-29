@@ -56,7 +56,7 @@ class NeighborViewModel @Inject constructor(
                 val body = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
                 val request = Request.Builder()
                     .url(url)
-                    .header("Authorization", "Bearer")
+//                    .header("Authorization", "Bearer $apiKey")
                     .header("Content-Type", "application/json")
                     .post(body)
                     .build()

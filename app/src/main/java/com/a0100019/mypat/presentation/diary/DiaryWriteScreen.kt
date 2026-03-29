@@ -188,6 +188,7 @@ fun DiaryWriteScreen(
         isPhotoLoading = diaryWriteState.isPhotoLoading,
         diarySequence = diaryWriteState.diarySequence,
         firstWrite = diaryWriteState.firstWrite,
+        aiText = diaryWriteState.aiText,
 
         onContentsTextChange = diaryWriteViewModel::onContentsTextChange,
         clickPhotoChange = diaryWriteViewModel::clickPhotoChange,
@@ -214,6 +215,7 @@ fun DiaryWriteScreen(
     isPhotoLoading: Boolean = false,
     diarySequence: Int = 0,
     firstWrite: Boolean = true,
+    aiText: String = "",
 
     onDiaryFinishClick: () -> Unit,
     onContentsTextChange: (String) -> Unit,
@@ -517,7 +519,7 @@ fun DiaryWriteScreen(
                     decorationBox = { innerTextField ->
                         if (writeDiaryData.contents.isEmpty()) {
                             Text(
-                                text = "\n\n가볍게 하루를 정리해볼까요?"
+                                text = "\n\n" + aiText
                                 ,
                                 style = MaterialTheme.typography.titleMedium,
                                 color = Color.Gray,

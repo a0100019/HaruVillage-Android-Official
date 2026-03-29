@@ -113,6 +113,7 @@ fun SettingScreen(
         recommending = settingState.recommending,
         recommended = settingState.recommended,
         donationList = settingState.donationList,
+        notice = settingState.notice,
 
         onClose = settingViewModel::onCloseClick,
         onSignOutClick = settingViewModel::dataSave,
@@ -130,6 +131,7 @@ fun SettingScreen(
         onMedal19Click = settingViewModel::onMedal19Click,
         popBackStack = popBackStack,
         onReviewClick = settingViewModel::onReviewClick,
+        loadNotice = settingViewModel::loadNotice,
 
         // 🔥 여기서 연결
         onGoogleLoginChangeClick = {
@@ -158,6 +160,7 @@ fun SettingScreen(
     recommending : String = "-1",
     recommended : String = "-1",
     donationList: List<Donation> = emptyList(),
+    notice: String = "서버에서 받아오는 중..",
 
     onSignOutClick: () -> Unit,
     onClose: () -> Unit,
@@ -176,6 +179,7 @@ fun SettingScreen(
     onMedal19Click: () -> Unit = {},
     onReviewClick: () -> Unit = {},
     onGoogleLoginChangeClick: () -> Unit = {},
+    loadNotice: () -> Unit = {}
 
 ) {
 
@@ -210,6 +214,11 @@ fun SettingScreen(
             onClose = onClose,
             onLetterClick = clickLetterDataChange,
             letterDataList = letterDataList
+        )
+
+        "notice" -> NoticeDialog(
+            onClose = onClose,
+            notice = notice
         )
 
         "recommendation" -> RecommendationDialog(
@@ -311,15 +320,30 @@ fun SettingScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            SettingButton(
-                text = "글씨체 변경하기",
-                onClick = { onSituationChange("font") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
             Spacer(modifier = Modifier.height(3.dp))
             Divider()
             Spacer(modifier = Modifier.height(3.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ){
+                // 기타 정보
+                SettingButton(
+                    text = "글씨체 변경하기",
+                    onClick = { onSituationChange("font") },
+                    modifier = Modifier.weight(1f)
+                )
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                SettingButton(
+                    text = "공지사항",
+                    onClick = { loadNotice() },
+                    modifier = Modifier.weight(1f)
+                )
+
+            }
 
             Row(
                 modifier = Modifier

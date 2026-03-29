@@ -29,6 +29,12 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
+import org.json.JSONObject
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.annotation.OrbitExperimental
@@ -71,6 +77,7 @@ class DiaryWriteViewModel @Inject constructor(
 
     init {
         loadData()
+        generateAiGreeting()
     }
 
     fun loadData() = intent {
@@ -167,6 +174,66 @@ class DiaryWriteViewModel @Inject constructor(
             )
         }
 
+    }
+
+    private fun generateAiGreeting() = intent {
+        reduce { state.copy(aiText = "AI가 분석하는중...") }
+
+        val diaryCount = diaryDao.getAllDiaryData().count()
+
+        val result = withContext(Dispatchers.IO) {
+            try {
+                val client = OkHttpClient()
+                // 유빈님이 넣으신 OpenAI 키
+                val url = "https://api.openai.com/v1/chat/completions"
+
+                val json = JSONObject().apply {
+                    put("model", "gpt-3.5-turbo")
+                    put("messages", JSONArray().apply {
+                        put(JSONObject().apply {
+                            put("role", "user")
+                            put("content", "당신은 일기를 쓰도록 용기를 주는 사람입니다. 이때까지 $diaryCount 개 일기를 적었다고 꼭 알려주고, 오늘 일기를 적을 수 있도록 응원 한마디 해주세요. 길지않게 두줄만 해주세요. 반말말고 존댓말로 해주세요")
+                        })
+                    })
+                }
+
+                val body = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+                val request = Request.Builder()
+                    .url(url)
+//                    .header("Authorization", "Bearer $apiKey")
+                    .header("Content-Type", "application/json")
+                    .post(body)
+                    .build()
+
+                client.newCall(request).execute().use { response ->
+                    val responseBody = response.body?.string()
+
+                    if (!response.isSuccessful) {
+                        // 실패 시 로그 (401: 키 문제, 429: 한도 초과 등)
+                        Log.e("OpenAI", "통신 실패 코드: ${response.code}")
+                        Log.e("OpenAI", "에러 내용: $responseBody")
+                        return@withContext "가볍게 하루를 정리해볼까요?"
+                    }
+
+                    Log.d("OpenAI", "통신 성공: $responseBody")
+
+                    val jsonResponse = JSONObject(responseBody ?: "")
+                    val aiMessage = jsonResponse.getJSONArray("choices")
+                        .getJSONObject(0)
+                        .getJSONObject("message")
+                        .getString("content")
+
+                    Log.d("OpenAI", "추출된 메시지: $aiMessage")
+                    aiMessage
+                }
+            } catch (e: Exception) {
+                Log.e("OpenAI", "예외 발생: ${e.message}")
+                e.printStackTrace()
+                "가볍게 하루를 정리해볼까요?"
+            }
+        }
+
+        reduce { state.copy(aiText = result.trim()) }
     }
 
     private fun isNetworkAvailable(context: Context): Boolean {
@@ -448,6 +515,7 @@ data class DiaryWriteState(
     val photoDataList: List<Photo> = emptyList(),
     val diarySequence: Int = 0,
 
+    val aiText: String = "",
     val clickPhoto: String = "",
     val writeDiaryData: Diary = Diary(date = "", contents = "", emotion = ""),
     val writePossible: Boolean = false,
