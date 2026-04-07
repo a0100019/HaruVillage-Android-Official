@@ -444,7 +444,7 @@ fun WalkScreen(
                             Text(weekAverageSteps.toString(), style = MaterialTheme.typography.bodyLarge)
 
 //                            Spacer(modifier = Modifier.weight(1f))
-//
+//                          s
 //                            Text("전체 평균 걸음 수 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
 //                            Text(averageSteps.toString(), style = MaterialTheme.typography.bodyLarge)
                         }
