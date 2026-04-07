@@ -1,4 +1,4 @@
-package com.a0100019.mypat.presentation.first
+package com.a0100019.mypat.presentation.main.first
 
 import androidx.lifecycle.ViewModel
 import com.a0100019.mypat.data.room.allUser.AllUserDao

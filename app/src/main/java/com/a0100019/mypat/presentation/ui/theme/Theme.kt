@@ -8,9 +8,12 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -88,32 +91,41 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-// Theme.kt
 @Composable
 fun MypatTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    // 1. 컨텍스트와 타이포그래피 설정 읽기
     val context = LocalContext.current
-
-    // remember를 사용해 앱 실행 중 불필요한 재계산을 방지합니다.
     val typography = remember { getAppTypography(context) }
 
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            // (생략: 기존 다이내믹 컬러 코드)
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
         darkTheme -> lightScheme
         else -> lightScheme
     }
 
+    // --- 글꼴 배율 고정 로직 추가 ---
+    val currentDensity = LocalDensity.current
+    val fixedDensity = remember(currentDensity) {
+        Density(
+            density = currentDensity.density,
+            fontScale = 1f // 시스템 설정을 무시하고 1배율로 고정
+        )
+    }
+
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = typography, // 🔥 위에서 생성한 typography 적용
-        content = content
+        typography = typography,
+        content = {
+            // CompositionLocalProvider로 하위 모든 컴포저블의 Density를 교체합니다.
+            CompositionLocalProvider(LocalDensity provides fixedDensity) {
+                content()
+            }
+        }
     )
 }
 

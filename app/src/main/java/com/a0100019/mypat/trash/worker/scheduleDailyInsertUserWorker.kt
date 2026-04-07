@@ -1,4 +1,4 @@
-//package com.a0100019.mypat.domain.worker
+package com.a0100019.mypat.trash.worker//package com.a0100019.mypat.domain.worker
 //
 //import android.content.Context
 //import android.util.Log

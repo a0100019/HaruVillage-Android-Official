@@ -1,4 +1,4 @@
-package com.a0100019.mypat.presentation.first
+package com.a0100019.mypat.presentation.main.first
 
 import android.app.Activity
 import android.widget.Toast

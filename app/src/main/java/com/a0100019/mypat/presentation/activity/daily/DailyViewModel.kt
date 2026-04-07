@@ -69,163 +69,163 @@ class DailyViewModel @Inject constructor(
         }
     }
 
-//    @SuppressLint("NewApi")
-//    @RequiresApi(Build.VERSION_CODES.Q)
-//    fun walkPermissionCheck(context: Context) = intent {
-//        val hasPermission = ContextCompat.checkSelfPermission(
-//            context,
-//            Manifest.permission.ACTIVITY_RECOGNITION
-//        ) == PackageManager.PERMISSION_GRANTED
-//
-//        if (hasPermission) {
-//            // 권한 있을 때 처리
-//            notificationPermissionCheck(context)
-//        } else {
-//            val activity = context as? Activity
-//            val isDeniedPermanently = activity?.let {
-//                !ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.ACTIVITY_RECOGNITION)
-//            } ?: false
-//
-//            if (isDeniedPermanently) {
-//                // 완전 거부했을 때 처리 (설정으로 유도 등)
-//                reduce {
-//                    state.copy(
-//                        situation = "walkPermissionSetting"
-//                    )
-//                }
-//            } else {
-//                // 단순 거부했을 때 처리 (권한 요청 UI 다시 띄울 수 있음)
-//                reduce {
-//                    state.copy(
-//                        situation = "walkPermissionRequest"
-//                    )
-//                }
-//            }
-//        }
-//    }
-//
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//    fun notificationPermissionCheck(context: Context) = intent {
-//
-//        val permission = Manifest.permission.POST_NOTIFICATIONS
-//
-//        val hasPermission = ContextCompat.checkSelfPermission(
-//            context,
-//            permission
-//        ) == PackageManager.PERMISSION_GRANTED
-//
-//        if (hasPermission) {
-//            // 권한 있음 → 정상 진행
-//            batteryPermissionCheck(context)
-//        } else {
-//            val activity = context as? Activity
-//            val isDeniedPermanently = activity?.let {
-//                !ActivityCompat.shouldShowRequestPermissionRationale(it, permission)
-//            } ?: false
-//
-//            if (isDeniedPermanently) {
-//                // 🔥 완전 거절 → 설정 화면으로 유도
-//                reduce {
-//                    state.copy(
-//                        situation = "notificationPermissionSetting"
-//                    )
-//                }
-//            } else {
-//                // 📌 단순 거절 → 다시 요청 가능
-//                reduce {
-//                    state.copy(
-//                        situation = "notificationPermissionRequest"
-//                    )
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun batteryPermissionCheck(context: Context) = intent {
-//
-//        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-//
-//        val isIgnoring = pm.isIgnoringBatteryOptimizations(context.packageName)
-//
-//        if (isIgnoring) {
-//            postSideEffect(DailySideEffect.NavigateToWalkScreen)
-//        } else {
-//            reduce {
-//                state.copy(situation = "batteryPermissionRequest")
-//            }
-//        }
-//    }
-//
-//    @SuppressLint("NewApi")
-//    @RequiresApi(Build.VERSION_CODES.Q)
-//    fun onDialogPermissionCheckClick(context: Context) = intent {
-//
-//        val hasPermission = ContextCompat.checkSelfPermission(
-//            context,
-//            Manifest.permission.ACTIVITY_RECOGNITION
-//        ) == PackageManager.PERMISSION_GRANTED
-//
-//        if (hasPermission) {
-//            // 권한 있을 때 처리
-//            notificationPermissionCheck(context)
-//        } else {
-//            reduce {
-//                state.copy(
-//                    situation = "walkPermissionSettingNo"
-//                )
-//            }
-//        }
-//
-//    }
-//
-//    @SuppressLint("InlinedApi")
-//    @RequiresApi(Build.VERSION_CODES.Q)
-//    fun onDialogNotificationPermissionCheckClick(context: Context) = intent {
-//
-//        val permission = Manifest.permission.POST_NOTIFICATIONS
-//
-//        val hasPermission = ContextCompat.checkSelfPermission(
-//            context,
-//            permission
-//        ) == PackageManager.PERMISSION_GRANTED
-//
-//        if (hasPermission) {
-//            // 권한 있을 때 처리
-//            batteryPermissionCheck(context)
-//        } else {
-//            reduce {
-//                state.copy(
-//                    situation = "notificationPermissionSettingNo"
-//                )
-//            }
-//        }
-//
-//    }
-//
-//    fun onDialogBatteryOptimizationPermissionCheckClick(context: Context) = intent {
-//
-//        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-//
-//        val isIgnoring = pm.isIgnoringBatteryOptimizations(context.packageName)
-//
-//        if (isIgnoring) {
-//            // ✅ 배터리 최적화 예외 허용됨
-//            reduce {
-//                state.copy(
-//                    situation = ""
-//                )
-//            }
-//            postSideEffect(DailySideEffect.NavigateToWalkScreen)
-//
-//        } else {
-//            // ❌ 아직 허용 안 됨
-//            reduce {
-//                state.copy(
-//                    situation = "batteryPermissionSettingNo"
-//                )
-//            }
-//        }
-//    }
+    @SuppressLint("NewApi")
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun walkPermissionCheck(context: Context) = intent {
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACTIVITY_RECOGNITION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            // 권한 있을 때 처리
+            notificationPermissionCheck(context)
+        } else {
+            val activity = context as? Activity
+            val isDeniedPermanently = activity?.let {
+                !ActivityCompat.shouldShowRequestPermissionRationale(it, Manifest.permission.ACTIVITY_RECOGNITION)
+            } ?: false
+
+            if (isDeniedPermanently) {
+                // 완전 거부했을 때 처리 (설정으로 유도 등)
+                reduce {
+                    state.copy(
+                        situation = "walkPermissionSetting"
+                    )
+                }
+            } else {
+                // 단순 거부했을 때 처리 (권한 요청 UI 다시 띄울 수 있음)
+                reduce {
+                    state.copy(
+                        situation = "walkPermissionRequest"
+                    )
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun notificationPermissionCheck(context: Context) = intent {
+
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            // 권한 있음 → 정상 진행
+            batteryPermissionCheck(context)
+        } else {
+            val activity = context as? Activity
+            val isDeniedPermanently = activity?.let {
+                !ActivityCompat.shouldShowRequestPermissionRationale(it, permission)
+            } ?: false
+
+            if (isDeniedPermanently) {
+                // 🔥 완전 거절 → 설정 화면으로 유도
+                reduce {
+                    state.copy(
+                        situation = "notificationPermissionSetting"
+                    )
+                }
+            } else {
+                // 📌 단순 거절 → 다시 요청 가능
+                reduce {
+                    state.copy(
+                        situation = "notificationPermissionRequest"
+                    )
+                }
+            }
+        }
+    }
+
+    private fun batteryPermissionCheck(context: Context) = intent {
+
+        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+
+        val isIgnoring = pm.isIgnoringBatteryOptimizations(context.packageName)
+
+        if (isIgnoring) {
+            postSideEffect(DailySideEffect.NavigateToWalkScreen)
+        } else {
+            reduce {
+                state.copy(situation = "batteryPermissionRequest")
+            }
+        }
+    }
+
+    @SuppressLint("NewApi")
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun onDialogPermissionCheckClick(context: Context) = intent {
+
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACTIVITY_RECOGNITION
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            // 권한 있을 때 처리
+            notificationPermissionCheck(context)
+        } else {
+            reduce {
+                state.copy(
+                    situation = "walkPermissionSettingNo"
+                )
+            }
+        }
+
+    }
+
+    @SuppressLint("InlinedApi")
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun onDialogNotificationPermissionCheckClick(context: Context) = intent {
+
+        val permission = Manifest.permission.POST_NOTIFICATIONS
+
+        val hasPermission = ContextCompat.checkSelfPermission(
+            context,
+            permission
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (hasPermission) {
+            // 권한 있을 때 처리
+            batteryPermissionCheck(context)
+        } else {
+            reduce {
+                state.copy(
+                    situation = "notificationPermissionSettingNo"
+                )
+            }
+        }
+
+    }
+
+    fun onDialogBatteryOptimizationPermissionCheckClick(context: Context) = intent {
+
+        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+
+        val isIgnoring = pm.isIgnoringBatteryOptimizations(context.packageName)
+
+        if (isIgnoring) {
+            // ✅ 배터리 최적화 예외 허용됨
+            reduce {
+                state.copy(
+                    situation = ""
+                )
+            }
+            postSideEffect(DailySideEffect.NavigateToWalkScreen)
+
+        } else {
+            // ❌ 아직 허용 안 됨
+            reduce {
+                state.copy(
+                    situation = "batteryPermissionSettingNo"
+                )
+            }
+        }
+    }
 
     fun onCloseClick() = intent {
         reduce {

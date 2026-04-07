@@ -51,6 +51,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.a0100019.mypat.presentation.activity.daily.walk.RequestBatteryPermissionScreen
+import com.a0100019.mypat.presentation.activity.daily.walk.RequestNotificationPermissionScreen
+import com.a0100019.mypat.presentation.activity.daily.walk.RequestPermissionScreen
 import com.a0100019.mypat.presentation.main.mainDialog.SimpleAlertDialog
 import com.a0100019.mypat.presentation.ui.component.MainButton
 import com.a0100019.mypat.presentation.ui.image.etc.BackGroundImage
@@ -93,15 +96,15 @@ fun DailyScreen(
     }
 
     DailyScreen(
-//        onWalkNavigateClick = { dailyViewModel.walkPermissionCheck(context) },
+        onWalkNavigateClick = { dailyViewModel.walkPermissionCheck(context) },
         onDiaryNavigateClick = onDiaryNavigateClick,
         onEnglishNavigateClick = onEnglishNavigateClick,
         onKoreanNavigateClick = onKoreanNavigateClick,
         onKnowledgeNavigateClick = onKnowledgeNavigateClick,
         onCloseClick = dailyViewModel::onCloseClick,
-//        onDialogPermissionCheckClick = dailyViewModel::onDialogPermissionCheckClick,
-//        onDialogNotificationPermissionCheckClick = dailyViewModel::onDialogNotificationPermissionCheckClick,
-//        onDialogBatteryOptimizationPermissionCheckClick = dailyViewModel::onDialogBatteryOptimizationPermissionCheckClick,
+        onDialogPermissionCheckClick = dailyViewModel::onDialogPermissionCheckClick,
+        onDialogNotificationPermissionCheckClick = dailyViewModel::onDialogNotificationPermissionCheckClick,
+        onDialogBatteryOptimizationPermissionCheckClick = dailyViewModel::onDialogBatteryOptimizationPermissionCheckClick,
         popBackStack = popBackStack,
         onAdClick = dailyViewModel::onAdClick,
         onSituationChange = dailyViewModel::onSituationChange,
@@ -124,7 +127,38 @@ fun DailyScreen(
     onAdClick: () -> Unit = {},
     onSituationChange: (String) -> Unit = {},
     onCloseClick: () -> Unit = {},
+    onWalkNavigateClick: () -> Unit = {},
+    onDialogPermissionCheckClick: (Context) -> Unit = {},
+    onDialogNotificationPermissionCheckClick: (Context) -> Unit = {},
+    onDialogBatteryOptimizationPermissionCheckClick: (Context) -> Unit = {},
 ) {
+
+    if(situation == "walkPermissionRequest") {
+        RequestPermissionScreen()
+    } else if (situation in listOf("walkPermissionSetting", "walkPermissionSettingNo")) {
+        WalkPermissionDialog(
+            situation = situation,
+            onCloseClick = onCloseClick,
+            onCheckClick = onDialogPermissionCheckClick
+        )
+    } else if (situation == "notificationPermissionRequest") {
+        RequestNotificationPermissionScreen()
+    } else if (situation in listOf("notificationPermissionSetting", "notificationPermissionSettingNo")) {
+        NotificationPermissionDialog(
+            situation = situation,
+            onCloseClick = onCloseClick,
+            onCheckClick = onDialogNotificationPermissionCheckClick
+        )
+    } else if (situation == "batteryPermissionRequest") {
+        RequestBatteryPermissionScreen()
+    } else if (situation in listOf("batteryPermissionSetting", "batteryPermissionSettingNo")) {
+        BatteryPermissionDialog(
+            situation = situation,
+            onCloseClick = onCloseClick,
+            onCheckClick = onDialogBatteryOptimizationPermissionCheckClick
+        )
+    }
+
     // 다이얼로그 로직
     if (situation == "adCheck") {
         SimpleAlertDialog(
@@ -182,7 +216,8 @@ fun DailyScreen(
                 val missionItems = listOf(
                     Triple("상식", "💡", "필수 지식 배우기") to onKnowledgeNavigateClick,
                     Triple("영단어", "🇬🇧", "목표 영단어 추측") to onEnglishNavigateClick,
-                    Triple("사자성어", "📜", "한자 카드 조합") to onKoreanNavigateClick
+                    Triple("사자성어", "📜", "한자 카드 조합") to onKoreanNavigateClick,
+                    Triple("만보기", "️🚶‍♂️‍️", "하루 만보 걷기") to onWalkNavigateClick,
                 )
 
                 missionItems.forEach { (data, onClick) ->

@@ -1,4 +1,4 @@
-package com.a0100019.mypat.domain
+package com.a0100019.mypat.trash
 
 interface CombineNumberUseCase {
 

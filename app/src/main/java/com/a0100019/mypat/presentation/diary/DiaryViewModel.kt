@@ -42,7 +42,6 @@ import java.util.Calendar
 import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
-
 @HiltViewModel
 class DiaryViewModel @Inject constructor(
     private val userDao: UserDao,

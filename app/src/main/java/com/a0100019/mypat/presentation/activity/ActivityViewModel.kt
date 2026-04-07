@@ -75,8 +75,6 @@ class ActivityViewModel @Inject constructor(
 }
 
 
-
-
 @Immutable
 data class ActivityState(
     val userDataList: List<User> = emptyList(),

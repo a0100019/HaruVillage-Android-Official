@@ -184,7 +184,7 @@ class DiaryWriteViewModel @Inject constructor(
         val result = withContext(Dispatchers.IO) {
             try {
                 val client = OkHttpClient()
-                // 유빈님이 넣으신 OpenAI 키
+                // OpenAI 키
                 val url = "https://api.openai.com/v1/chat/completions"
 
                 val json = JSONObject().apply {

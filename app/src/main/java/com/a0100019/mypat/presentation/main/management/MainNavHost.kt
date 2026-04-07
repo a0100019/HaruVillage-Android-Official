@@ -33,7 +33,7 @@ import com.a0100019.mypat.presentation.neighbor.privateChat.PrivateChatGameScree
 import com.a0100019.mypat.presentation.neighbor.privateChat.PrivateChatInScreen
 import com.a0100019.mypat.presentation.neighbor.privateChat.PrivateRoomScreen
 import com.a0100019.mypat.presentation.activity.store.BillingManager
-import com.a0100019.mypat.presentation.first.FirstContainerScreen
+import com.a0100019.mypat.presentation.main.first.FirstContainerScreen
 
 @Composable
 fun MainNavHost(
