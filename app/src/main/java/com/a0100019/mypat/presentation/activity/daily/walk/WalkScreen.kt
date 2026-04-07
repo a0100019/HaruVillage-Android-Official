@@ -430,10 +430,10 @@ fun WalkScreen(
                             Text("오늘 이동 거리 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
                             Text(String.format("%.3f km", todayDistance), style = MaterialTheme.typography.bodyLarge)
 
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            Text("오늘 칼로리 소모 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                            Text(String.format("%.1f kcal", todayCalories), style = MaterialTheme.typography.bodyLarge)
+//                            Spacer(modifier = Modifier.weight(1f))
+//
+//                            Text("오늘 칼로리 소모 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+//                            Text(String.format("%.1f kcal", todayCalories), style = MaterialTheme.typography.bodyLarge)
                         }
 
                         Row(
@@ -443,10 +443,10 @@ fun WalkScreen(
                             Text("일주일 평균 걸음 수 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
                             Text(weekAverageSteps.toString(), style = MaterialTheme.typography.bodyLarge)
 
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            Text("전체 평균 걸음 수 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                            Text(averageSteps.toString(), style = MaterialTheme.typography.bodyLarge)
+//                            Spacer(modifier = Modifier.weight(1f))
+//
+//                            Text("전체 평균 걸음 수 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
+//                            Text(averageSteps.toString(), style = MaterialTheme.typography.bodyLarge)
                         }
 
                         Row(

@@ -64,12 +64,11 @@
 
         <activity android:name=".presentation.main.management.loading.LoadingActivity" />
 
-        <!-- 🔥 Foreground Service 등록 추가 -->
-<!--        <service-->
-<!--            android:name=".presentation.daily.walk.StepForegroundService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="false"-->
-<!--            android:foregroundServiceType="health" />-->
+        <service
+            android:name=".presentation.activity.daily.walk.StepForegroundService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="health" />
 
         <receiver
             android:name=".presentation.diary.AlarmReceiver"
