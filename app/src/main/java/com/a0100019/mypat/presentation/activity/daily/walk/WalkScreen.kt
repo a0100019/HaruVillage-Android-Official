@@ -3,6 +3,7 @@ package com.a0100019.mypat.presentation.activity.daily.walk
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,33 +21,43 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.a0100019.mypat.R
 import com.a0100019.mypat.data.room.user.User
 import com.a0100019.mypat.presentation.ui.component.MainButton
 import com.a0100019.mypat.presentation.ui.image.etc.BackGroundImage
+import com.a0100019.mypat.presentation.ui.image.etc.JustImage
 import com.a0100019.mypat.presentation.ui.theme.MypatTheme
 import org.orbitmvi.orbit.compose.collectAsState
 import org.orbitmvi.orbit.compose.collectSideEffect
@@ -100,8 +111,8 @@ fun WalkScreen(
 
     today: String = "2025-07-15",
     calendarMonth: String = "2025-07",
-    saveSteps: Int = 0,
-    stepsRaw: String = "2001-01-01.1",
+    saveSteps: Int = 3000,
+    stepsRaw: String = "2025-07-17.1000/2025-07-14.2000/2026-04-09.7300",
     situation: String = "record",
     baseDate: String = "2025-07-15",
 
@@ -185,10 +196,12 @@ fun WalkScreen(
 
         BackGroundImage()
 
+
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
 
             Box(
                 contentAlignment = Alignment.Center, // ✅ 내부 내용물 중앙 정렬
@@ -197,6 +210,16 @@ fun WalkScreen(
                     .fillMaxWidth()
                     .padding(10.dp)
             ) {
+
+                JustImage(
+                    filePath = "etc/exit.png",
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .size(30.dp)
+                        .clickable {
+                            popBackStack()
+                        }
+                )
 
                 StepProgressCircle(
                     steps = todaySteps,
@@ -226,73 +249,87 @@ fun WalkScreen(
                         .align(Alignment.TopCenter)
                 )
 
-                // 오른쪽 버튼
-                MainButton(
-                    text = "닫기",
-                    onClick = popBackStack,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                )
-//
-//                // 오른쪽 버튼
-//                MainButton(
-//                    text = "끄기",
-//                    onClick = {
-//                        context.stopService(intent)
-//                    },
-//                    modifier = Modifier
-//                        .align(Alignment.TopStart)
-//                        .padding(8.dp)
-//                )
 
             }
 
             if (saveSteps <= 5000) {
+                // 상단에 이 변수를 추가하면 게이지가 스르륵 차오릅니다 (선택사항)
+                val animatedProgress by animateFloatAsState(
+                    targetValue = (saveSteps.coerceAtMost(5000) / 5000f),
+                    animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+                    label = "stepProgress"
+                )
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp) // 외부 여백 조정
+                        .shadow(elevation = 6.dp, shape = RoundedCornerShape(20.dp))
                         .background(
-                            MaterialTheme.colorScheme.scrim,
-                            shape = RoundedCornerShape(16.dp)
+                            color = Color(0xFFFFF9C4),
+                            shape = RoundedCornerShape(20.dp)
                         )
-                        .border(
-                            width = 2.dp,
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-                        .padding(16.dp)
+                        .padding(16.dp) // 내부 패딩을 20 -> 16으로 축소
                 ) {
-                    Text(
-                        text = "5000보를 모아 햇살을 획득하세요!  현재 걸음 수 : $saveSteps",
-                        style = MaterialTheme.typography.bodyLarge,
+                    // 헤더와 걸음 수를 한 줄로 합쳐서 세로 공간 절약 가능 (선택 사항)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "☀️", fontSize = 18.sp)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "햇살 모으기",
+                            style = MaterialTheme.typography.titleSmall, // 타이포 크기 살짝 축소
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF5D4037)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp)) // 간격 축소 (16 -> 8)
+
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Text(
+                            text = buildAnnotatedString {
+                                withStyle(SpanStyle(fontSize = 24.sp, fontWeight = FontWeight.ExtraBold, color = Color(0xFFFBC02D))) {
+                                    append("$saveSteps")
+                                }
+                                withStyle(SpanStyle(fontSize = 12.sp, color = Color.Gray)) {
+                                    append(" / 5000")
+                                }
+                            }
+                        )
+                        Text(
+                            text = String.format("%.1f%%", animatedProgress * 100),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFFFBC02D)
+                        )
+                    }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    val progress = (saveSteps.coerceAtMost(5000) / 5000f)
+                    Spacer(modifier = Modifier.height(6.dp)) // 간격 축소 (10 -> 6)
 
                     LinearProgressIndicator(
-                        progress = progress,
+                        progress = animatedProgress,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(14.dp)
-                            .clip(RoundedCornerShape(12.dp)),
-                        color = Color(0xFF81D4FA),      // 연한 하늘색 (Pastel Sky Blue)
-                        trackColor = Color(0xFFE1F5FE)  // 아주 연한 하늘색 (Ice Blue)
+                            .height(10.dp) // 두께 축소 (18 -> 10)
+                            .clip(CircleShape), // 둥글게 깎기
+                        color = Color(0xFFFFEB3B),
+                        trackColor = Color.White.copy(alpha = 0.6f)
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(6.dp)) // 간격 축소 (8 -> 6)
 
-                    // 퍼센트 텍스트
                     Text(
-                        text = String.format("%.1f%%", progress * 100),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.align(Alignment.End)
+                        text = if (saveSteps >= 5000) "햇살 획득 완료! ✨" else "조금만 더 걸어봐요!",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Color(0xFF8D6E63),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
                     )
                 }
 
@@ -352,132 +389,102 @@ fun WalkScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
-                            .background(
-                                MaterialTheme.colorScheme.scrim,
-                                shape = RoundedCornerShape(16.dp)
-                            )
+                            .shadow(elevation = 4.dp, shape = RoundedCornerShape(24.dp)) // 은은한 그림자 추가
+                            .background(Color.White, shape = RoundedCornerShape(24.dp)) // 배경은 깔끔한 화이트
                             .border(
-                                width = 2.dp,
-                                color = MaterialTheme.colorScheme.primaryContainer,
-                                shape = RoundedCornerShape(16.dp)
+                                width = 1.dp,
+                                color = Color(0xFFF0F0F0), // 아주 연한 회색 테두리
+                                shape = RoundedCornerShape(24.dp)
                             )
-                            .padding(16.dp)
+                            .padding(20.dp)
                     ) {
-
                         val goalStatus = getWalkGoalStatus(totalSteps, walkGoals)
 
+                        // 🚩 상단 목표 섹션
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .background(Color(0xFFFFF4E5), shape = RoundedCornerShape(16.dp)) // 목표 섹션만 연한 오렌지 배경
                                 .padding(16.dp)
+                            ,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "목표 : ${goalStatus.currentGoal.name}",
+                                text = "🚩 현재 목표 : ${goalStatus.currentGoal.name}",
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color(0xFFE65100)
                             )
 
-                            // 🔥 전체 거리 + 남은 거리 표시
                             Text(
                                 text = String.format(
-                                    "전체 %.3f km / 남은 거리 %.3f km",
-                                    goalStatus.currentGoal.distanceKm,   // 전체 거리
-                                    goalStatus.remainKm               // 남은 거리
+                                    "전체 %.2f km 중 %.2f km 남았습니다",
+                                    goalStatus.currentGoal.distanceKm,
+                                    goalStatus.remainKm
                                 ),
-                                style = MaterialTheme.typography.bodyLarge,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFF6D4C41),
                                 modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
                             )
 
-                            // 🔥 프로그레스바 + 퍼센트
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-
                                 LinearProgressIndicator(
                                     progress = goalStatus.progress.toFloat(),
                                     modifier = Modifier
                                         .weight(1f)
-                                        .height(14.dp)
-                                        .clip(RoundedCornerShape(12.dp)),
-                                    color = Color(0xFFFFB74D),   // 오렌지
-                                    trackColor = Color(0xFFFFECB3)
+                                        .height(10.dp)
+                                        .clip(CircleShape),
+                                    color = Color(0xFFFFB74D),
+                                    trackColor = Color.White
                                 )
 
-                                Spacer(modifier = Modifier.width(8.dp))
+                                Spacer(modifier = Modifier.width(12.dp))
 
                                 Text(
-                                    text = String.format("%.2f%%", goalStatus.progress * 100),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Medium
+                                    text = String.format("%.1f%%", goalStatus.progress * 100),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFFE65100)
                                 )
                             }
                         }
 
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        // 📊 통계 섹션 헤더
                         Text(
                             text = "📊 걸음 수 통계",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .padding(bottom = 12.dp, top = 12.dp)
-                                .align(Alignment.CenterHorizontally),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF2D2D2D),
+                            modifier = Modifier.padding(bottom = 16.dp)
                         )
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(bottom = 12.dp)
-                        ) {
-                            Text("오늘 이동 거리 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                            Text(String.format("%.3f km", todayDistance), style = MaterialTheme.typography.bodyLarge)
+                        // 통계 내용 (좌우 정렬 맞춤)
+                        val labelStyle = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray, fontWeight = FontWeight.Medium)
+                        val valueStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold, color = Color(0xFF424242))
 
-//                            Spacer(modifier = Modifier.weight(1f))
-//
-//                            Text("오늘 칼로리 소모 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-//                            Text(String.format("%.1f kcal", todayCalories), style = MaterialTheme.typography.bodyLarge)
+                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                                Text("일주일 평균 걸음", style = labelStyle)
+                                Text("${weekAverageSteps} 보", style = valueStyle)
+                            }
+
+                            Row(modifier = Modifier.fillMaxWidth()) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text("총 이동 거리", style = labelStyle)
+                                    Text(String.format("%.2f km", totalDistance), style = valueStyle)
+                                }
+                                Column(modifier = Modifier.weight(1f), horizontalAlignment = Alignment.End) {
+                                    Text("총 걸음 수", style = labelStyle)
+                                    Text("${totalSteps} 보", style = valueStyle)
+                                }
+                            }
                         }
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(bottom = 12.dp)
-                        ) {
-                            Text("일주일 평균 걸음 수 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                            Text(weekAverageSteps.toString(), style = MaterialTheme.typography.bodyLarge)
-
-//                            Spacer(modifier = Modifier.weight(1f))
-//                          s
-//                            Text("전체 평균 걸음 수 : ", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-//                            Text(averageSteps.toString(), style = MaterialTheme.typography.bodyLarge)
-                        }
-
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(bottom = 12.dp)
-                        ) {
-                            Text(
-                                text = "총 이동 거리 : ",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Medium
-                            )
-
-                            Text(
-                                text = String.format("%.3f km", totalDistance),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            Text(
-                                text = "총 걸음 수 : ",
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Medium
-                            )
-
-                            Text(
-                                text = totalSteps.toString(),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-
                     }
                 } else {
                     Row(

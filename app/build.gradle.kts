@@ -17,6 +17,7 @@ android {
         minSdk = 26
         targetSdk = 35
         versionCode = 30
+        //업데이트 버전 올릴 땐 local.properties에서 ai api키 neighborViewModel에 넣고 파일 만들기
         versionName = "26.12"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
