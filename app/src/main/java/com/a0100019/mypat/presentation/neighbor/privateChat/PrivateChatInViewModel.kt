@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a0100019.mypat.data.room.user.User
 import com.a0100019.mypat.data.room.user.UserDao
+import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
@@ -75,7 +76,7 @@ class PrivateChatInViewModel @Inject constructor(
 
         var isLastUpdated = false
 
-        // 🔥 채팅방 정보 구독
+        // 채팅방 정보 구독
         roomRef.addSnapshotListener { roomSnap, error ->
 
             if (error != null || roomSnap == null || !roomSnap.exists()) {
@@ -112,7 +113,7 @@ class PrivateChatInViewModel @Inject constructor(
                 else
                     privateChatData.user1
 
-            // 🔥 채팅방 진입 last 업데이트 (1회)
+            // 채팅방 진입 last 업데이트 (1회)
             if (!isLastUpdated) {
                 val lastField =
                     if (myTag == privateChatData.user1) "last1" else "last2"
@@ -123,7 +124,7 @@ class PrivateChatInViewModel @Inject constructor(
                 Log.d("PrivateChatInViewModel", "lastField 업데이트: $lastField")
             }
 
-            // 🔹 UI 상태 업데이트
+            // UI 상태 업데이트
             viewModelScope.launch {
                 intent {
                     reduce {
@@ -136,63 +137,32 @@ class PrivateChatInViewModel @Inject constructor(
                 }
             }
 
-            // 🔹 칭호 지급 로직 (❌ 함수 분리 안 함)
+            // 칭호 지급 로직
             viewModelScope.launch {
+                var currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
 
-                // 💬 메시지 100개 → 칭호21
+                // 메시지 100개 이상이면 칭호21
                 if (privateChatData.messageCount >= 100) {
-
-                    val myMedal = userDao.getAllUserData()
-                        .find { it.id == "etc" }!!.value3
-
-                    val myMedalList = myMedal
-                        .split("/")
-                        .mapNotNull { it.toIntOrNull() }
-                        .toMutableList()
-
-                    if (!myMedalList.contains(21)) {
-                        myMedalList.add(21)
-
-                        userDao.update(
-                            id = "etc",
-                            value3 = myMedalList.joinToString("/")
-                        )
-
-                        postSideEffect(
-                            PrivateChatInSideEffect.Toast("칭호를 획득했습니다!")
-                        )
+                    val (updated, acquired) = tryAcquireMedal(currentMedals, 21)
+                    if (acquired) {
+                        currentMedals = updated
+                        userDao.update(id = "etc", value3 = updated)
+                        postSideEffect(PrivateChatInSideEffect.Toast("칭호를 획득했습니다!"))
                     }
                 }
 
-
-                // 🏆 누적 점수 100 → 칭호25
+                // 누적 점수 100 이상이면 칭호25
                 if (privateChatData.totalScore >= 100) {
-
-                    val myMedal = userDao.getAllUserData()
-                        .find { it.id == "etc" }!!.value3
-
-                    val myMedalList = myMedal
-                        .split("/")
-                        .mapNotNull { it.toIntOrNull() }
-                        .toMutableList()
-
-                    if (!myMedalList.contains(25)) {
-                        myMedalList.add(25)
-
-                        userDao.update(
-                            id = "etc",
-                            value3 = myMedalList.joinToString("/")
-                        )
-
-                        postSideEffect(
-                            PrivateChatInSideEffect.Toast("칭호를 획득했습니다!")
-                        )
+                    val (updated, acquired) = tryAcquireMedal(currentMedals, 25)
+                    if (acquired) {
+                        userDao.update(id = "etc", value3 = updated)
+                        postSideEffect(PrivateChatInSideEffect.Toast("칭호를 획득했습니다!"))
                     }
                 }
             }
         }
 
-        // 🔥 메시지 구독
+        // 메시지 구독
         roomRef.collection("message")
             .addSnapshotListener { snapshot, error ->
 
@@ -266,7 +236,7 @@ class PrivateChatInViewModel @Inject constructor(
             .collection("message")
             .document(dateId)
 
-        // 🔥 user1 / user2 확인
+        // user1 / user2 확인
         baseRef.get().addOnSuccessListener { roomDoc ->
 
             val user1 = state.privateChatData.user1
@@ -292,7 +262,7 @@ class PrivateChatInViewModel @Inject constructor(
                 }
             }
 
-            // 🔥 메시지 + 이름 + last 동시에 처리
+            // 메시지 + 이름 + last 동시에 처리
             Firebase.firestore.runBatch { batch ->
 
                 // 메시지 저장
@@ -305,12 +275,12 @@ class PrivateChatInViewModel @Inject constructor(
                 // 내 이름 업데이트
                 batch.update(baseRef, nameField, myName)
 
-                // 🔥 내 last 업데이트 (읽음 기준)
+                // 내 last 업데이트 (읽음 기준)
                 batch.update(baseRef, lastField, now)
 
                 batch.update(baseRef, "lastMessage", text)
 
-                // 🔥 메시지 카운트 +1
+                // 메시지 카운트 +1
                 batch.update(baseRef, "messageCount", FieldValue.increment(1))
 
             }.addOnSuccessListener {

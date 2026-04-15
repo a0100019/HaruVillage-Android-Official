@@ -33,7 +33,7 @@ fun WalkWeekView(
     baseDate: String = "2025-01-15",
     stepsRaw: String
 ) {
-    // 🔥 stepsRaw → Map<"YYYY-MM-DD", Int>
+    //  stepsRaw → Map<"YYYY-MM-DD", Int>
     val walkMap = stepsRaw
         .split("/")
         .mapNotNull {

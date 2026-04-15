@@ -174,7 +174,7 @@ fun IndexPatDialog(
                             )
                         }
 
-// 🎮 게임 수
+//  게임 수
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {

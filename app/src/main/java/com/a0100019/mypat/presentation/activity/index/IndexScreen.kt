@@ -414,7 +414,7 @@ fun IndexScreen(
                                                 horizontalAlignment = Alignment.CenterHorizontally
                                             ) {
 
-                                                // 🔹 이미지 컨테이너
+                                                //  이미지 컨테이너
                                                 Box(
                                                     modifier = Modifier
                                                         .weight(1f)
@@ -431,7 +431,7 @@ fun IndexScreen(
                                                         )
                                                 ) {
 
-                                                    // 🔹 아이템 이미지 (잠금 시 투명도만 적용)
+                                                    //  아이템 이미지 (잠금 시 투명도만 적용)
                                                     JustImage(
                                                         filePath = item.url,
                                                         contentScale = ContentScale.Fit,
@@ -441,7 +441,7 @@ fun IndexScreen(
                                                             .alpha(if (isLocked) 0.3f else 1f)
                                                     )
 
-                                                    // 🔹 하단 입체감 그라디언트 (유지)
+                                                    //  하단 입체감 그라디언트 (유지)
                                                     Box(
                                                         modifier = Modifier
                                                             .fillMaxSize()
@@ -457,7 +457,7 @@ fun IndexScreen(
                                                     )
                                                 }
 
-                                                // 🔹 하단 텍스트 영역
+                                                //  하단 텍스트 영역
                                                 Column(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
@@ -552,7 +552,7 @@ fun IndexScreen(
                                                 horizontalAlignment = Alignment.CenterHorizontally
                                             ) {
 
-                                                // 🔹 이미지 컨테이너
+                                                //  이미지 컨테이너
                                                 Box(
                                                     modifier = Modifier
                                                         .weight(1f)
@@ -566,7 +566,7 @@ fun IndexScreen(
                                                         )
                                                 ) {
 
-                                                    // 🔹 메인 이미지 (잠금 시 투명도만)
+                                                    //  메인 이미지 (잠금 시 투명도만)
                                                     JustImage(
                                                         filePath = area.url,
                                                         contentScale = ContentScale.Crop,
@@ -575,7 +575,7 @@ fun IndexScreen(
                                                             .alpha(if (area.date == "0") 0.4f else 1f)
                                                     )
 
-                                                    // 🔹 하단 은은한 그라디언트
+                                                    //  하단 은은한 그라디언트
                                                     Box(
                                                         modifier = Modifier
                                                             .fillMaxSize()
@@ -592,7 +592,7 @@ fun IndexScreen(
 
                                                 }
 
-                                                // 🔹 하단 텍스트 영역
+                                                //  하단 텍스트 영역
                                                 Column(
                                                     modifier = Modifier
                                                         .fillMaxWidth()

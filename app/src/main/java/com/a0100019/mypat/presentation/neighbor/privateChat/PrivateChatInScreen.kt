@@ -480,7 +480,7 @@ fun PrivateChatInScreen(
 
                                 } else {
                                     // ==========================
-                                    // 💬 일반 채팅
+                                    //  일반 채팅
                                     // ==========================
                                     Row(
                                         modifier = Modifier

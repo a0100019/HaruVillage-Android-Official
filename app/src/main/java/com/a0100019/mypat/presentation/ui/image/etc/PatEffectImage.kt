@@ -48,14 +48,14 @@ fun PatEffectImage(
             )
     }
 
-    // 🔥 애니메이션 진행 중일 때만 계산
+    //  애니메이션 진행 중일 때만 계산
     val animatedProgress by animateLottieCompositionAsState(
         composition = composition,
         isPlaying = isPlaying,
         iterations = Int.MAX_VALUE
     )
 
-    // 🔥 멈춘 순간의 progress 고정
+    //  멈춘 순간의 progress 고정
     val frozenProgress = remember { mutableStateOf(0f) }
 
     if (isPlaying) {

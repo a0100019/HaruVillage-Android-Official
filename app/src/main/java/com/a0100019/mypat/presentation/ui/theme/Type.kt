@@ -20,7 +20,7 @@ import android.content.Context
 // Type.kt
 // ... 기존 import 유지
 
-// 🔥 Typography를 반환하는 함수로 변경
+// Typography를 반환하는 함수로 변경
 fun getAppTypography(context: Context): Typography {
     val prefs = context.getSharedPreferences("font_prefs", Context.MODE_PRIVATE)
     val fontName = prefs.getString("font_key", "pretendard") ?: "pretendard"
@@ -35,7 +35,7 @@ fun getAppTypography(context: Context): Typography {
     }
 
     return Typography(
-        // 🎯 Display
+        // Display
         displayLarge = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.Normal,
@@ -58,7 +58,7 @@ fun getAppTypography(context: Context): Typography {
             letterSpacing = 0.sp
         ),
 
-        // 📝 Headline
+        // Headline
         headlineLarge = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.Normal,
@@ -81,7 +81,7 @@ fun getAppTypography(context: Context): Typography {
             letterSpacing = 0.sp
         ),
 
-        // 🏷️ Title
+        // Title
         titleLarge = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.Normal,
@@ -104,7 +104,7 @@ fun getAppTypography(context: Context): Typography {
             letterSpacing = 0.1.sp
         ),
 
-        // 📄 Body
+        // Body
         bodyLarge = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.Normal,
@@ -127,7 +127,7 @@ fun getAppTypography(context: Context): Typography {
             letterSpacing = 0.4.sp
         ),
 
-        // 🔖 Label
+        // Label
         labelLarge = TextStyle(
             fontFamily = fontFamily,
             fontWeight = FontWeight.Medium,

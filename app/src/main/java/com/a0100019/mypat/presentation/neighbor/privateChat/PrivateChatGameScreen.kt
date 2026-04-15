@@ -90,7 +90,7 @@ fun PrivateChatGameScreen(
 
             Spacer(modifier = Modifier.size(36.dp))
 
-            // 🏆 점수
+            //  점수
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -140,7 +140,7 @@ fun PrivateChatGameScreen(
 
             Spacer(modifier = Modifier.height(36.dp))
 
-            // 🎯 게이지 카드
+            //  게이지 카드
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

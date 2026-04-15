@@ -104,7 +104,7 @@ fun BoardScreen(
         onNavigateToFirstScreen = onNavigateToFirstScreen,
 
         onImageSelected = { uri ->
-            // ✅ 여기서 뷰모델 호출!
+            //  여기서 뷰모델 호출!
             boardViewModel.handleImageSelection(context, uri)
         },
         isPhotoLoading = boardState.isPhotoLoading,
@@ -263,7 +263,7 @@ fun BoardScreen(
                     // 사진 존재 여부 체크 (photoFirebaseUrl이 "0"이 아니면 사진 있음)
                     val hasPhoto = message.photoFirebaseUrl != "0"
 
-                    // ✅ 전체를 Box로 감싸서 아이콘을 위에 띄움
+                    //  전체를 Box로 감싸서 아이콘을 위에 띄움
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()

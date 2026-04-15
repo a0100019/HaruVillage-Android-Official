@@ -200,7 +200,7 @@ fun CommunityScreen(
                             .padding(8.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // 🔹 위쪽 두 Row: 남는 공간 꽉 채우기
+                        //  위쪽 두 Row: 남는 공간 꽉 채우기
                         Column(
                             modifier = Modifier
                                 .weight(1f) // 남는 공간 전부 차지
@@ -254,7 +254,7 @@ fun CommunityScreen(
                             }
                         }
 
-                        // 🔹 맨 아래 Row: 항상 고정
+                        //  맨 아래 Row: 항상 고정
                         Row(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier

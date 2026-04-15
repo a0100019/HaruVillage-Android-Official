@@ -215,7 +215,7 @@ fun FirstScreen(
                                 ) {
                                     Text("📌", fontSize = 36.sp)
                                 }
-                                // ⭐ 신규 기능 표시 (작은 카메라 아이콘 배지)
+                                //  신규 기능 표시 (작은 카메라 아이콘 배지)
                                 Box(
                                     modifier = Modifier
                                         .offset(x = 4.dp, y = 4.dp)

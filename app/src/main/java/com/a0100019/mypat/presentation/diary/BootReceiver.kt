@@ -14,7 +14,7 @@ class BootReceiver : BroadcastReceiver() {
 
             val timeString = prefs.getString("alarm_time", null)
 
-            // 🔹 저장된 알람 시간이 있으면 복구
+            //  저장된 알람 시간이 있으면 복구
             if (!timeString.isNullOrEmpty()) {
                 scheduleDiaryAlarm(context, timeString)
             }

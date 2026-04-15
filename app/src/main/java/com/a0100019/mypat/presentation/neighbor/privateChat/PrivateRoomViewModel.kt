@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a0100019.mypat.data.room.user.User
 import com.a0100019.mypat.data.room.user.UserDao
+import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import com.a0100019.mypat.presentation.neighbor.chat.ChatSideEffect
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.Query
@@ -104,10 +105,10 @@ class PrivateRoomViewModel @Inject constructor(
                     val totalScore = (doc.getLong("totalScore") ?: 0L).toInt()
                     val attacker = doc.getString("attacker") ?: ""
 
-                    // 🔥 내가 user1인지 user2인지 판별
+                    // 내가 user1인지 user2인지 판별
                     val myLast = if (myTag == user1) last1 else last2
 
-                    // 🔥 message 컬렉션에서 안 읽은 메시지 개수 계산
+                    // message 컬렉션에서 안 읽은 메시지 개수 계산
                     Firebase.firestore
                         .collection("chatting")
                         .document("privateChat")
@@ -157,28 +158,13 @@ class PrivateRoomViewModel @Inject constructor(
                 }
             }
 
-        // 🔥 방 10개 이상 → 칭호 지급
+        // 방 10개 이상이면 칭호 지급
         if (roomCount >= 10) {
-
-            val myMedal = userDao.getAllUserData()
-                .find { it.id == "etc" }!!.value3
-
-            val myMedalList =
-                myMedal.split("/")
-                    .mapNotNull { it.toIntOrNull() }
-                    .toMutableList()
-
-            if (!myMedalList.contains(20)) {
-                myMedalList.add(20)
-
-                userDao.update(
-                    id = "etc",
-                    value3 = myMedalList.joinToString("/")
-                )
-
-                postSideEffect(
-                    PrivateRoomSideEffect.Toast("칭호를 획득했습니다!")
-                )
+            val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+            val (updated, acquired) = tryAcquireMedal(currentMedals, 20)
+            if (acquired) {
+                userDao.update(id = "etc", value3 = updated)
+                postSideEffect(PrivateRoomSideEffect.Toast("칭호를 획득했습니다!"))
             }
         }
     }

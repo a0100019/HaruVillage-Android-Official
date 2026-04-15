@@ -124,14 +124,14 @@ class DailyViewModel @Inject constructor(
             } ?: false
 
             if (isDeniedPermanently) {
-                // 🔥 완전 거절 → 설정 화면으로 유도
+                //  완전 거절 → 설정 화면으로 유도
                 reduce {
                     state.copy(
                         situation = "notificationPermissionSetting"
                     )
                 }
             } else {
-                // 📌 단순 거절 → 다시 요청 가능
+                //  단순 거절 → 다시 요청 가능
                 reduce {
                     state.copy(
                         situation = "notificationPermissionRequest"
@@ -209,7 +209,7 @@ class DailyViewModel @Inject constructor(
         val isIgnoring = pm.isIgnoringBatteryOptimizations(context.packageName)
 
         if (isIgnoring) {
-            // ✅ 배터리 최적화 예외 허용됨
+            //  배터리 최적화 예외 허용됨
             reduce {
                 state.copy(
                     situation = ""
@@ -218,7 +218,7 @@ class DailyViewModel @Inject constructor(
             postSideEffect(DailySideEffect.NavigateToWalkScreen)
 
         } else {
-            // ❌ 아직 허용 안 됨
+            //  아직 허용 안 됨
             reduce {
                 state.copy(
                     situation = "batteryPermissionSettingNo"
@@ -298,7 +298,7 @@ class DailyViewModel @Inject constructor(
                     .mapNotNull { it.toIntOrNull() }
                     .toMutableList()
 
-            // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
+            //  여기 숫자 두개랑 위에 // 바꾸면 됨
             if (!myMedalList.contains(27)) {
                 myMedalList.add(27)
 

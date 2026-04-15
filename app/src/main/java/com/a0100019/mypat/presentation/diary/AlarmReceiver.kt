@@ -13,12 +13,12 @@ import java.util.Calendar
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        // 🔹 추가: 알람 시간 데이터가 있는지 확인 (취소된 경우 중단)
+        //  추가: 알람 시간 데이터가 있는지 확인 (취소된 경우 중단)
         val prefs = context.getSharedPreferences("diary_alarm", Context.MODE_PRIVATE)
         val savedTime = prefs.getString("alarm_time", null)
         if (savedTime == null) return
 
-        // 🔹 연속 일수 SharedPreferences
+        //  연속 일수 SharedPreferences
         val streakPrefs =
             context.getSharedPreferences("diary_prefs", Context.MODE_PRIVATE)
         val diarySequence = streakPrefs.getInt("diarySequence", 0)
@@ -108,7 +108,7 @@ class AlarmReceiver : BroadcastReceiver() {
     }
 }
 
-// 🔹 알람 예약 함수
+//  알람 예약 함수
 fun scheduleDiaryAlarm(context: Context, timeString: String) {
     val prefs = context.getSharedPreferences("diary_alarm", Context.MODE_PRIVATE)
     prefs.edit().putString("alarm_time", timeString).apply()
@@ -146,7 +146,7 @@ fun scheduleDiaryAlarm(context: Context, timeString: String) {
     )
 }
 
-// 🔹 알람 취소 함수
+//  알람 취소 함수
 fun cancelDiaryAlarm(context: Context) {
     val prefs = context.getSharedPreferences("diary_alarm", Context.MODE_PRIVATE)
     prefs.edit().remove("alarm_time").apply()

@@ -41,10 +41,10 @@ class MainActivity : ComponentActivity() {
 
 //        InterstitialAdManager.loadAd(this)
 
-        // ✅ 시스템 윈도우 영역 사용 (상단 상태바 보이게)
+        //  시스템 윈도우 영역 사용 (상단 상태바 보이게)
 //        WindowCompat.setDecorFitsSystemWindows(window, true)
 
-        // ✅ 뒤로가기 버튼 클릭 시 앱을 완전히 종료하는 콜백
+        //  뒤로가기 버튼 클릭 시 앱을 완전히 종료하는 콜백
         onBackPressedDispatcher.addCallback(this) {
             // 모든 액티비티를 종료하고 프로세스를 완전히 죽입니다.
             finishAffinity()
@@ -52,12 +52,12 @@ class MainActivity : ComponentActivity() {
             // android.os.Process.killProcess(android.os.Process.myPid())
         }
 
-        // 🔹 SharedPreferences에서 배경음악 설정 불러오기
+        //  SharedPreferences에서 배경음악 설정 불러오기
         val prefs = getSharedPreferences("bgm_prefs", Context.MODE_PRIVATE)
         val bgm = prefs.getString("bgm", "area/normal.webp")
         val bgmOn = prefs.getBoolean("bgmOn", true)
 
-        // 🔹 앱 전역 배경음악 초기화
+        //  앱 전역 배경음악 초기화
         AppBgmManager.init(
             context = this,
             name = bgm!!,

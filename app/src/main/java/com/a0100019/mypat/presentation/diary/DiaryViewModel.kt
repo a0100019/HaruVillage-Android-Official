@@ -20,6 +20,7 @@ import com.a0100019.mypat.data.room.user.User
 import com.a0100019.mypat.data.room.user.UserDao
 import com.a0100019.mypat.presentation.game.secondGame.SecondGameSideEffect
 import com.a0100019.mypat.presentation.main.MainSideEffect
+import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import dagger.hilt.android.internal.Contexts.getApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -73,27 +74,10 @@ class DiaryViewModel @Inject constructor(
         val currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         if(allDiaryData.count { it.emotion == "emotion/love.png" } >= 10) {
-            //매달, medal, 칭호5
-            val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-            val myMedalList: MutableList<Int> =
-                myMedal
-                    .split("/")
-                    .mapNotNull { it.toIntOrNull() }
-                    .toMutableList()
-
-            // 🔥 여기 숫자 두개 바꾸면 됨
-            if (!myMedalList.contains(5)) {
-                myMedalList.add(5)
-
-                // 다시 문자열로 합치기
-                val updatedMedal = myMedalList.joinToString("/")
-
-                // DB 업데이트
-                userDao.update(
-                    id = "etc",
-                    value3 = updatedMedal
-                )
+            val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+            val (updated, acquired) = tryAcquireMedal(currentMedals, 5)
+            if (acquired) {
+                userDao.update(id = "etc", value3 = updated)
                 postSideEffect(DiarySideEffect.Toast("칭호를 획득했습니다!"))
             }
         }
@@ -113,31 +97,11 @@ class DiaryViewModel @Inject constructor(
             }
             maxStreak = maxOf(maxStreak, currentStreak)
         }
-        // 🎯 결과
         if (maxStreak >= 10) {
-            // 최장 연속 출석 10일 이상
-            //매달, medal, 칭호8
-            val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-            val myMedalList: MutableList<Int> =
-                myMedal
-                    .split("/")
-                    .mapNotNull { it.toIntOrNull() }
-                    .toMutableList()
-
-            // 🔥 여기 숫자 두개 바꾸면 됨
-            if (!myMedalList.contains(8)) {
-                myMedalList.add(8)
-
-                // 다시 문자열로 합치기
-                val updatedMedal = myMedalList.joinToString("/")
-
-                // DB 업데이트
-                userDao.update(
-                    id = "etc",
-                    value3 = updatedMedal
-                )
-
+            val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+            val (updated, acquired) = tryAcquireMedal(currentMedals, 8)
+            if (acquired) {
+                userDao.update(id = "etc", value3 = updated)
                 postSideEffect(DiarySideEffect.Toast("칭호를 획득했습니다!"))
             }
         }
@@ -320,7 +284,7 @@ class DiaryViewModel @Inject constructor(
             val diaryData = allDiaryDataList.find { it.date == date }
 
             if (diaryData == null) {
-                // ✅ 해당 날짜의 일기 데이터가 존재하지 않을 때
+                // 해당 날짜의 일기 데이터가 존재하지 않을 때
                 Log.w("Diary", "일기 데이터가 존재하지 않음: $date")
 
                 // 예: 새 일기 작성 화면으로 이동
@@ -328,12 +292,12 @@ class DiaryViewModel @Inject constructor(
                 postSideEffect(DiarySideEffect.NavigateToDiaryWriteScreen)
             }
             else if (diaryData.state == "대기") {
-                // ✅ 일기 상태가 '대기'인 경우
+                // 일기 상태가 '대기'인 경우
                 userDao.update(id = "etc2", value = diaryData.date)
                 postSideEffect(DiarySideEffect.NavigateToDiaryWriteScreen)
             }
             else {
-                // ✅ 기존 일기가 존재하는 경우
+                // 기존 일기가 존재하는 경우
                 userDao.update(id = "etc2", value = diaryData.date)
                 reduce {
                     state.copy(
@@ -416,7 +380,7 @@ sealed interface DiarySideEffect{
 
     object ExitApp : DiarySideEffect   // 앱 종료용
 
-    // 🔥 추가
+    // 알림 권한 확인 요청
     data class CheckNotificationPermission(
         val timeString: String
     ) : DiarySideEffect

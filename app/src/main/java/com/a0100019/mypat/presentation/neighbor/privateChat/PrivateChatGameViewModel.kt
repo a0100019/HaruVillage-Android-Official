@@ -182,7 +182,7 @@ class PrivateChatGameViewModel @Inject constructor(
                 val updates = mutableMapOf<String, Any>()
 
                 // ===============================
-                // 🔥 내가 user1 인 경우
+                //  내가 user1 인 경우
                 // ===============================
                 if (myTag == user1) {
                     updates["attacker"] = user2
@@ -191,7 +191,7 @@ class PrivateChatGameViewModel @Inject constructor(
                 }
 
                 // ===============================
-                // 🔥 내가 user2 인 경우
+                //  내가 user2 인 경우
                 // ===============================
                 if (myTag == user2) {
                     updates["attacker"] = user1
@@ -200,14 +200,14 @@ class PrivateChatGameViewModel @Inject constructor(
                 }
 
                 // ===============================
-                // 🔥 채팅방 데이터 업데이트
+                //  채팅방 데이터 업데이트
                 // ===============================
                 if (updates.isNotEmpty()) {
                     roomRef.update(updates)
                 }
 
                 // ===============================
-                // 🔥 system 메시지 추가
+                //  system 메시지 추가
                 // ===============================
                 val timestampKey = nowTimestamp.toString()
 
@@ -229,7 +229,7 @@ class PrivateChatGameViewModel @Inject constructor(
                     )
             }
 
-        // 🎯 첫 공격 → 칭호24
+        //  첫 공격 → 칭호24
         val myMedal = userDao.getAllUserData()
             .find { it.id == "etc" }!!.value3
 

@@ -43,6 +43,7 @@ import com.a0100019.mypat.data.room.world.WorldDao
 import com.a0100019.mypat.data.room.world.getWorldInitialData
 import com.a0100019.mypat.presentation.main.management.addMedalAction
 import com.a0100019.mypat.presentation.main.management.getMedalActionCount
+import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -155,27 +156,10 @@ class SettingViewModel @Inject constructor(
 
     fun onMedal19Click() = intent {
         //매달, medal, 칭호19
-        val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-        val myMedalList: MutableList<Int> =
-            myMedal
-                .split("/")
-                .mapNotNull { it.toIntOrNull() }
-                .toMutableList()
-
-        // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
-        if (!myMedalList.contains(19)) {
-            myMedalList.add(19)
-
-            // 다시 문자열로 합치기
-            val updatedMedal = myMedalList.joinToString("/")
-
-            // DB 업데이트
-            userDao.update(
-                id = "etc",
-                value3 = updatedMedal
-            )
-
+        val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: return@intent
+        val (updated, acquired) = tryAcquireMedal(currentMedals, 19)
+        if (acquired) {
+            userDao.update(id = "etc", value3 = updated)
             postSideEffect(SettingSideEffect.Toast("칭호를 획득했습니다!"))
         }
 
@@ -193,27 +177,10 @@ class SettingViewModel @Inject constructor(
 
             if (getMedalActionCount(medalData, actionId = 18) >= 3) {
                 //매달, medal, 칭호18
-                val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-                val myMedalList: MutableList<Int> =
-                    myMedal
-                        .split("/")
-                        .mapNotNull { it.toIntOrNull() }
-                        .toMutableList()
-
-                // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
-                if (!myMedalList.contains(18)) {
-                    myMedalList.add(18)
-
-                    // 다시 문자열로 합치기
-                    val updatedMedal = myMedalList.joinToString("/")
-
-                    // DB 업데이트
-                    userDao.update(
-                        id = "etc",
-                        value3 = updatedMedal
-                    )
-
+                val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+                val (updated, acquired) = tryAcquireMedal(currentMedals, 18)
+                if (acquired) {
+                    userDao.update(id = "etc", value3 = updated)
                     postSideEffect(SettingSideEffect.Toast("칭호를 획득했습니다!"))
                 }
             }
@@ -232,14 +199,14 @@ class SettingViewModel @Inject constructor(
         // 현재 사용자 null이면 로그아웃 성공
         val currentUser = FirebaseAuth.getInstance().currentUser
         if (currentUser == null) {
-            // ✅ 로그아웃 성공
+            // 로그아웃 성공
             // 사용자 데이터 삭제
 //            userDao.update(id = "auth", value = "0")
             roomDataClear()
             postSideEffect(SettingSideEffect.Toast("로그아웃 되었습니다"))
             postSideEffect(SettingSideEffect.NavigateToLoginScreen)
         } else {
-            // ❌ 로그아웃 실패
+            // 로그아웃 실패
             postSideEffect(SettingSideEffect.Toast("로그아웃에 실패했습니다"))
         }
 
@@ -249,7 +216,7 @@ class SettingViewModel @Inject constructor(
 
         try {
         val db = Firebase.firestore
-        val userId = state.userDataList.find { it.id == "auth" }!!.value
+        val userId = state.userDataList.find { it.id == "auth" }?.value ?: return@intent
         val userDataList = state.userDataList
         val itemDataList = state.itemDataList
         val patDataList = state.patDataList
@@ -322,7 +289,7 @@ class SettingViewModel @Inject constructor(
 
         )
 
-            // 🔹 월드 데이터 만들기
+            // 월드 데이터 만들기
             val worldMap = worldDataList.drop(1)
                 .mapIndexed { index, data ->
                     if (data.type == "pat") {
@@ -532,7 +499,7 @@ class SettingViewModel @Inject constructor(
             val db = FirebaseFirestore.getInstance()
 
             val userDocRef =
-                db.collection("users").document(state.userDataList.find { it.id == "auth" }!!.value)
+                db.collection("users").document(state.userDataList.find { it.id == "auth" }?.value ?: return@intent)
             val subCollections =
                 listOf("daily", "dataCollection", "community", "code")
 
@@ -645,7 +612,7 @@ class SettingViewModel @Inject constructor(
     fun onCouponConfirmClick() = intent {
         val db = Firebase.firestore
         val couponText = state.editText // 사용자가 입력한 쿠폰 코드
-        val userId = state.userDataList.find { it.id == "auth" }!!.value
+        val userId = state.userDataList.find { it.id == "auth" }?.value ?: return@intent
 
         if (couponText.length <= 1) return@intent
 
@@ -782,7 +749,7 @@ class SettingViewModel @Inject constructor(
             .collection("code")
             .document("settingTalk")
             .collection("settingTalk")
-            .document(state.userDataList.find { it.id == "auth" }!!.value)
+            .document(state.userDataList.find { it.id == "auth" }?.value ?: return@intent)
             .set(
                 mapOf(now to messageMap),
                 SetOptions.merge()
@@ -795,27 +762,10 @@ class SettingViewModel @Inject constructor(
             }
 
         //매달, medal, 칭호17
-        val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-        val myMedalList: MutableList<Int> =
-            myMedal
-                .split("/")
-                .mapNotNull { it.toIntOrNull() }
-                .toMutableList()
-
-        // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
-        if (!myMedalList.contains(17)) {
-            myMedalList.add(17)
-
-            // 다시 문자열로 합치기
-            val updatedMedal = myMedalList.joinToString("/")
-
-            // DB 업데이트
-            userDao.update(
-                id = "etc",
-                value3 = updatedMedal
-            )
-
+        val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+        val (updated17, acquired17) = tryAcquireMedal(currentMedals, 17)
+        if (acquired17) {
+            userDao.update(id = "etc", value3 = updated17)
             postSideEffect(SettingSideEffect.Toast("칭호를 획득했습니다!"))
         }
 
@@ -872,27 +822,10 @@ class SettingViewModel @Inject constructor(
                 }
                 else -> {
                     //매달, medal, 칭호
-                    val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-                    val myMedalList: MutableList<Int> =
-                        myMedal
-                            .split("/")
-                            .mapNotNull { it.toIntOrNull() }
-                            .toMutableList()
-
-                    // 🔥 여기 숫자 두개 바꾸면 됨
-                    if (!myMedalList.contains(letterData.reward.toInt())) {
-                        myMedalList.add(letterData.reward.toInt())
-
-                        // 다시 문자열로 합치기
-                        val updatedMedal = myMedalList.joinToString("/")
-
-                        // DB 업데이트
-                        userDao.update(
-                            id = "etc",
-                            value3 = updatedMedal
-                        )
-
+                    val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: return@intent
+                    val (updated, acquired) = tryAcquireMedal(currentMedals, letterData.reward.toInt())
+                    if (acquired) {
+                        userDao.update(id = "etc", value3 = updated)
                         postSideEffect(SettingSideEffect.Toast("칭호를 획득했습니다!"))
                     }
                 }
@@ -976,7 +909,7 @@ class SettingViewModel @Inject constructor(
                 return@intent
             }
 
-            // 🔒 서로 추천 금지 체크: recommendation에서 forTag: myTag 가 이미 존재하면 금지
+            // 서로 추천 금지 체크: recommendation에서 forTag: myTag 가 이미 존재하면 금지
             val recoSnapshot = recoDocRef.get().await()
             val recoMap = recoSnapshot.data as? Map<String, Any> ?: emptyMap()
             val reciprocal = (recoMap[forTag] as? String) == myTag
@@ -1080,32 +1013,16 @@ class SettingViewModel @Inject constructor(
     fun onReviewClick() = intent {
 
         //매달, medal, 칭호23
-        val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-        val myMedalList: MutableList<Int> =
-            myMedal
-                .split("/")
-                .mapNotNull { it.toIntOrNull() }
-                .toMutableList()
-
-        // 🔥 여기 숫자 두개 바꾸면 됨
-        if (!myMedalList.contains(23)) {
-            myMedalList.add(23)
-
-            // 다시 문자열로 합치기
-            val updatedMedal = myMedalList.joinToString("/")
-
-            // DB 업데이트
-            userDao.update(
-                id = "etc",
-                value3 = updatedMedal
-            )
+        val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: return@intent
+        val (updated, acquired) = tryAcquireMedal(currentMedals, 23)
+        if (acquired) {
+            userDao.update(id = "etc", value3 = updated)
 
             val userDataList = userDao.getAllUserData()
 
             userDao.update(
                 id = "money",
-                value = (userDataList.find { it.id == "money" }!!.value.toInt() + 10).toString()
+                value = (userDataList.find { it.id == "money" }?.value?.toInt()?.plus(10) ?: 10).toString()
             )
 
             val url = "https://play.google.com/store/apps/details?id=com.a0100019.mypat"
@@ -1133,12 +1050,12 @@ class SettingViewModel @Inject constructor(
             val credential =
                 GoogleAuthProvider.getCredential(googleIdToken, null)
 
-            // 🔹 익명 계정 → 구글 계정 연결 (UID 유지 핵심)
+            // 익명 계정 -> 구글 계정 연결 (UID 유지 핵심)
             user.linkWithCredential(credential).await()
 
             Log.e("login", "게스트 → 구글 로그인 전환 성공 (uid 유지): ${user.uid}")
 
-            // 🔹 Local DB auth 정보는 그대로 UID 유지
+            // Local DB auth 정보는 그대로 UID 유지
             userDao.update(id = "selectPat", value3 = "0")
 
             postSideEffect(

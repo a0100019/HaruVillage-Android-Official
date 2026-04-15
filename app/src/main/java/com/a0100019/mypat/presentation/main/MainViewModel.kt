@@ -25,6 +25,7 @@ import com.a0100019.mypat.data.room.world.WorldDao
 import com.a0100019.mypat.presentation.diary.DiarySideEffect
 import com.a0100019.mypat.presentation.main.management.ManagementSideEffect
 import com.a0100019.mypat.presentation.main.management.RewardAdManager
+import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import com.a0100019.mypat.presentation.neighbor.privateChat.PrivateRoom
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
@@ -144,9 +145,9 @@ class MainViewModel @Inject constructor(
                 }
 
                 //로그아웃 후 첫 로그인이 아닐 경우
-                if(userDataList.find { it.id == "auth" }!!.value3 != "0"){
-                    ////지난 시간만큼 love
-                    val storedTime = userDataList.find { it.id == "auth" }!!.value3.toLong()
+                val authData = userDataList.find { it.id == "auth" }
+                if(authData != null && authData.value3 != "0"){
+                    val storedTime = authData.value3.toLong()
 
                     val now = System.currentTimeMillis()
                     val timeGap = now - storedTime
@@ -237,7 +238,7 @@ class MainViewModel @Inject constructor(
         } else {
 
             val newWorldData = state.worldDataList.find { it.value == patId.toString() && it.type == "pat" }
-            worldDao.update(newWorldData!!.copy(situation = ""))
+            if (newWorldData != null) worldDao.update(newWorldData.copy(situation = ""))
 
             reduce {
                 state.copy(
@@ -276,28 +277,10 @@ class MainViewModel @Inject constructor(
                 userDao.update(id = "money", value2 = (state.userDataList.find { it.id == "money" }!!.value2.toInt() + letterData.amount.toInt()).toString())
             }
             else -> {
-                //매달, medal, 칭호
-                val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-                val myMedalList: MutableList<Int> =
-                    myMedal
-                        .split("/")
-                        .mapNotNull { it.toIntOrNull() }
-                        .toMutableList()
-
-                // 🔥 여기 숫자 두개 바꾸면 됨
-                if (!myMedalList.contains(letterData.reward.toInt())) {
-                    myMedalList.add(letterData.reward.toInt())
-
-                    // 다시 문자열로 합치기
-                    val updatedMedal = myMedalList.joinToString("/")
-
-                    // DB 업데이트
-                    userDao.update(
-                        id = "etc",
-                        value3 = updatedMedal
-                    )
-
+                val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: return@intent
+                val (updated, acquired) = tryAcquireMedal(currentMedals, letterData.reward.toInt())
+                if (acquired) {
+                    userDao.update(id = "etc", value3 = updated)
                     postSideEffect(MainSideEffect.Toast("칭호를 획득했습니다!"))
                 }
             }
@@ -368,62 +351,28 @@ class MainViewModel @Inject constructor(
         patDao.update(state.lovePatData.copy(love = state.lovePatData.love + state.loveAmount))
         userDao.update(id = "money", value2 = (userDao.getValue2ById("money").toInt()+state.cashAmount).toString() )
 
-        if(state.lovePatData.love + state.loveAmount >= 500000) {
-            //매달, medal, 칭호2
-            val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
+        val totalLove = state.lovePatData.love + state.loveAmount
+        var currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
 
-            val myMedalList: MutableList<Int> =
-                myMedal
-                    .split("/")
-                    .mapNotNull { it.toIntOrNull() }
-                    .toMutableList()
-
-            // 🔥 여기 숫자 두개 바꾸면 됨
-            if (!myMedalList.contains(2)) {
-                myMedalList.add(2)
-
-                // 다시 문자열로 합치기
-                val updatedMedal = myMedalList.joinToString("/")
-
-                // DB 업데이트
-                userDao.update(
-                    id = "etc",
-                    value3 = updatedMedal
-                )
-
+        if (totalLove >= 500000) {
+            val (updated, acquired) = tryAcquireMedal(currentMedals, 2)
+            if (acquired) {
+                currentMedals = updated
+                userDao.update(id = "etc", value3 = updated)
                 postSideEffect(MainSideEffect.Toast("칭호를 획득했습니다!"))
             }
         }
 
-        if(state.lovePatData.love + state.loveAmount >= 1000000) {
-            //매달, medal, 칭호3
-            val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-            val myMedalList: MutableList<Int> =
-                myMedal
-                    .split("/")
-                    .mapNotNull { it.toIntOrNull() }
-                    .toMutableList()
-
-            // 🔥 여기 숫자 두개 바꾸면 됨
-            if (!myMedalList.contains(3)) {
-                myMedalList.add(3)
-
-                // 다시 문자열로 합치기
-                val updatedMedal = myMedalList.joinToString("/")
-
-                // DB 업데이트
-                userDao.update(
-                    id = "etc",
-                    value3 = updatedMedal
-                )
-
+        if (totalLove >= 1000000) {
+            val (updated, acquired) = tryAcquireMedal(currentMedals, 3)
+            if (acquired) {
+                userDao.update(id = "etc", value3 = updated)
                 postSideEffect(MainSideEffect.Toast("칭호를 획득했습니다!"))
             }
         }
 
-        val newWorldData = state.worldDataList.find { it.value == state.lovePatData.id.toString() && it.type == "pat" }
-        worldDao.update(newWorldData!!.copy(situation = ""))
+        val endWorldData = state.worldDataList.find { it.value == state.lovePatData.id.toString() && it.type == "pat" }
+        if (endWorldData != null) worldDao.update(endWorldData.copy(situation = ""))
 
         reduce {
             state.copy(

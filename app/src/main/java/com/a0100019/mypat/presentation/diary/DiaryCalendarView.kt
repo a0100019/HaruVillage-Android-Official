@@ -42,7 +42,7 @@ fun DiaryCalendarView(
     val daysInMonth = yearMonth.lengthOfMonth()
     val startDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7 // Sunday = 0
 
-    // 🔹 Diary.date -> LocalDate 로 매핑해 둔 Map (날짜 기준으로 Diary 바로 찾기 위함)
+    //  Diary.date -> LocalDate 로 매핑해 둔 Map (날짜 기준으로 Diary 바로 찾기 위함)
     val diaryMap: Map<LocalDate, Diary> = diaryList.associateBy { LocalDate.parse(it.date) }
 
     // 캘린더에 쓸 날짜 그리드 (LocalDate?)
@@ -114,7 +114,7 @@ fun DiaryCalendarView(
                             )
                         }
 
-                        // 🔥 Diary.emotion 값에 따라 색 변경 (함수 X, 즉석 when 문)
+                        //  Diary.emotion 값에 따라 색 변경 (함수 X, 즉석 when 문)
                         if (diary != null) {
 
                             if(diary.state == "대기") {

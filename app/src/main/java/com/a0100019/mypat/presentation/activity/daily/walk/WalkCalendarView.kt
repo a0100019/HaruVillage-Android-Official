@@ -111,7 +111,7 @@ fun WalkCalendarView(
                                 )
                             }
 
-                            // 🔥 걸음 원 (StepProgressCircle)
+                            //  걸음 원 (StepProgressCircle)
                             if (date != null) {
                                 StepProgressCircle(
                                     steps = count ?: 0,

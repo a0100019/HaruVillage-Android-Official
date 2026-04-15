@@ -70,7 +70,7 @@ fun KoreanDialog(
                     .padding(20.dp)
             ) {
 
-                // ⭐ 별 아이콘
+                //  별 아이콘
                 Box(modifier = Modifier.fillMaxWidth()) {
                     val starIcon = if (koreanDataState == "별") R.drawable.star_yellow else R.drawable.star_gray
                     Image(

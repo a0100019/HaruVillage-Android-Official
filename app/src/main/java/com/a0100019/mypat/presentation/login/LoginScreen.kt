@@ -99,7 +99,7 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
 
-    // 🔥 여기서 네비게이션 처리
+    // 여기서 네비게이션 처리
     loginViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is LoginSideEffect.Toast -> Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
@@ -168,7 +168,7 @@ fun LoginScreen(
 
             val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
-            // 🔥 자동 로그인 방지: 로그아웃 후 다시 실행
+            // 자동 로그인 방지: 로그아웃 후 다시 실행
             googleSignInClient.signOut().addOnCompleteListener {
                 launcher.launch(googleSignInClient.signInIntent)
             }
@@ -475,7 +475,7 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.size(20.dp))
 
-                // ✅ 구글 로그인 버튼
+                // 구글 로그인 버튼
                 Button(
                     onClick = {
                         if(termsChecked) { googleLoginClick() }
@@ -489,7 +489,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(48.dp)
-                        .alpha(if (termsChecked) 1f else 0.7f) // 🔹 전체 투명도 (70% 불투명)
+                        .alpha(if (termsChecked) 1f else 0.7f) // 전체 투명도 (70% 불투명)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically

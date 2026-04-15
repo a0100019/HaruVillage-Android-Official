@@ -59,7 +59,7 @@ fun PrivateChatGameHorizontalLine(
 
         val isSuccess = currentValue in targetStart..targetEnd
 
-        // 🎯 목표 구간
+        //  목표 구간
         Box(
             modifier = Modifier
                 .fillMaxHeight()

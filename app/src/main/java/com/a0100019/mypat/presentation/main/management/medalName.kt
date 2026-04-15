@@ -122,3 +122,23 @@ fun totalMedalCount(): Int {
     return (1..500) // 충분히 큰 범위
         .count { medalName(it) != "알 수 없음" }
 }
+
+/**
+ * 메달을 아직 보유하지 않았다면 추가하고 true 반환.
+ * 이미 보유 중이면 false 반환.
+ *
+ * @param currentMedals  "1/3/5" 형태의 슬래시 구분 문자열
+ * @param medalId        획득할 메달 ID
+ * @return Pair(갱신된 문자열, 획득 여부)
+ */
+fun tryAcquireMedal(currentMedals: String, medalId: Int): Pair<String, Boolean> {
+    val medalList = currentMedals
+        .split("/")
+        .mapNotNull { it.toIntOrNull() }
+        .toMutableList()
+
+    if (medalList.contains(medalId)) return currentMedals to false
+
+    medalList.add(medalId)
+    return medalList.joinToString("/") to true
+}

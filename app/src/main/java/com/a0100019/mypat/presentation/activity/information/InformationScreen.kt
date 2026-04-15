@@ -535,14 +535,14 @@ fun InformationScreen(
                                 label = "shimmerX"
                             )
 
-// 🎨 획득용 파스텔 베이스
+//  획득용 파스텔 베이스
                             val pastelBase = lerp(
                                 bubbleColor,
                                 Color.White,
                                 0.6f
                             )
 
-// ⭐ 테두리용 "쨍한" 컬러 (핵심 포인트)
+//  테두리용 "쨍한" 컬러 (핵심 포인트)
                             val strongBorderColor = lerp(
                                 bubbleColor,
                                 Color.Black,
@@ -572,7 +572,7 @@ fun InformationScreen(
                                                 )
                                             )
                                         } else {
-                                            // ❌ 미획득 → 완전 회색 통일
+                                            //  미획득 → 완전 회색 통일
                                             Brush.verticalGradient(
                                                 colors = listOf(
                                                     Color(0xFFF1F1F1),

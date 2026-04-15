@@ -57,7 +57,7 @@ fun DraggablePatImage(
     val key = instanceKey ?: patUrl
     val density = LocalDensity.current
 
-    // ✅ 내부에는 비율만 저장
+    //  내부에는 비율만 저장
     var posX by rememberSaveable(key) { mutableStateOf(xFloat) }
     var posY by rememberSaveable(key) { mutableStateOf(yFloat) }
 
@@ -94,7 +94,7 @@ fun DraggablePatImage(
                         shape = RoundedCornerShape(8.dp)
                     ) else Modifier
                 )
-                // ✅ 제스처는 고유키에 묶어서 안정화
+                //  제스처는 고유키에 묶어서 안정화
                 .pointerInput(key, surfaceWidthDp, surfaceHeightDp) {
                     detectDragGestures(
                         onDrag = { change, dragAmount ->
@@ -106,7 +106,7 @@ fun DraggablePatImage(
                             posX = (posX + (dxDp / surfaceWidthDp)).coerceIn(0f, 1f)
                             posY = (posY + (dyDp / surfaceHeightDp)).coerceIn(0f, 1f)
 
-                            // ✅ 드래그 중에는 ViewModel에 올리지 않음 (재구성 최소화)
+                            //  드래그 중에는 ViewModel에 올리지 않음 (재구성 최소화)
                         },
                         onDragEnd = {
                             newFloat(posX, posY) // ✅ 드래그가 끝났을 때만 반영

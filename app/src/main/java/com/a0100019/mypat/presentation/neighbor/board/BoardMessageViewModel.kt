@@ -358,7 +358,7 @@ class BoardMessageViewModel @Inject constructor(
                                 .mapNotNull { it.toIntOrNull() }
                                 .toMutableList()
 
-                        // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
+                        //  여기 숫자 두개랑 위에 // 바꾸면 됨
                         if (!myMedalList.contains(13)) {
                             myMedalList.add(13)
 

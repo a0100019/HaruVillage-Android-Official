@@ -10,6 +10,7 @@ import com.a0100019.mypat.data.room.user.UserDao
 import com.a0100019.mypat.presentation.main.management.addMedalAction
 import com.a0100019.mypat.presentation.main.management.getMedalActionCount
 import com.a0100019.mypat.presentation.main.management.RewardAdManager
+import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
@@ -64,27 +65,10 @@ class EnglishViewModel @Inject constructor(
 
         if(englishDataList.count { it.state == "완료" || it.state == "별"} >= 50) {
             //매달, medal, 칭호7
-            val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-            val myMedalList: MutableList<Int> =
-                myMedal
-                    .split("/")
-                    .mapNotNull { it.toIntOrNull() }
-                    .toMutableList()
-
-            // 🔥 여기 숫자 두개 바꾸면 됨
-            if (!myMedalList.contains(7)) {
-                myMedalList.add(7)
-
-                // 다시 문자열로 합치기
-                val updatedMedal = myMedalList.joinToString("/")
-
-                // DB 업데이트
-                userDao.update(
-                    id = "etc",
-                    value3 = updatedMedal
-                )
-
+            val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+            val (updatedMedal, acquired) = tryAcquireMedal(currentMedals, 7)
+            if (acquired) {
+                userDao.update(id = "etc", value3 = updatedMedal)
                 postSideEffect(EnglishSideEffect.Toast("칭호를 획득했습니다!"))
             }
         }
@@ -517,27 +501,10 @@ class EnglishViewModel @Inject constructor(
 
         if(getMedalActionCount(medalData, actionId = 27) == 15) {
             //매달, medal, 칭호27
-            val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-            val myMedalList: MutableList<Int> =
-                myMedal
-                    .split("/")
-                    .mapNotNull { it.toIntOrNull() }
-                    .toMutableList()
-
-            // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
-            if (!myMedalList.contains(27)) {
-                myMedalList.add(27)
-
-                // 다시 문자열로 합치기
-                val updatedMedal = myMedalList.joinToString("/")
-
-                // DB 업데이트
-                userDao.update(
-                    id = "etc",
-                    value3 = updatedMedal
-                )
-
+            val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+            val (updatedMedal, acquired) = tryAcquireMedal(currentMedals, 27)
+            if (acquired) {
+                userDao.update(id = "etc", value3 = updatedMedal)
                 postSideEffect(EnglishSideEffect.Toast("칭호를 획득했습니다!"))
             }
         }
@@ -556,27 +523,10 @@ class EnglishViewModel @Inject constructor(
                     postSideEffect(EnglishSideEffect.Toast("정답입니다!"))
 
                     //매달, medal, 칭호30
-                    val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-                    val myMedalList: MutableList<Int> =
-                        myMedal
-                            .split("/")
-                            .mapNotNull { it.toIntOrNull() }
-                            .toMutableList()
-
-                    // 🔥 여기 숫자 두개 바꾸면 됨
-                    if (!myMedalList.contains(30)) {
-                        myMedalList.add(30)
-
-                        // 다시 문자열로 합치기
-                        val updatedMedal = myMedalList.joinToString("/")
-
-                        // DB 업데이트
-                        userDao.update(
-                            id = "etc",
-                            value3 = updatedMedal
-                        )
-
+                    val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+                    val (updatedMedal, acquired) = tryAcquireMedal(currentMedals, 30)
+                    if (acquired) {
+                        userDao.update(id = "etc", value3 = updatedMedal)
                         postSideEffect(EnglishSideEffect.Toast("칭호를 획득했습니다!"))
                     }
 

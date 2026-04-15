@@ -578,7 +578,7 @@ fun BoardMessageScreen(
 
                                 Spacer(modifier = Modifier.height(8.dp))
 
-                                // 💬 댓글 내용
+                                //  댓글 내용
                                 Text(
                                     text = chat.message,
                                     fontSize = 14.sp,

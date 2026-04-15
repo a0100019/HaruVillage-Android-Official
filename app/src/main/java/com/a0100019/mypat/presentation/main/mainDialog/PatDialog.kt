@@ -120,7 +120,7 @@ fun PatDialog(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                // 🎮 미니게임 타이틀
+                //  미니게임 타이틀
                 Text(
                     text = "미니 게임",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),

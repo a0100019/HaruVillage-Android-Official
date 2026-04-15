@@ -16,6 +16,7 @@ import com.a0100019.mypat.data.room.user.User
 import com.a0100019.mypat.data.room.user.UserDao
 import com.a0100019.mypat.data.room.world.World
 import com.a0100019.mypat.data.room.world.WorldDao
+import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import com.a0100019.mypat.presentation.setting.Donation
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -372,26 +373,10 @@ class StoreViewModel @Inject constructor(
                 Log.d("STORE", "ALL ITEM GET -> RETURN")
                 postSideEffect(StoreSideEffect.Toast("아이템을 모두 얻었습니다!"))
                 //매달, medal, 칭호10
-                val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-                val myMedalList: MutableList<Int> =
-                    myMedal
-                        .split("/")
-                        .mapNotNull { it.toIntOrNull() }
-                        .toMutableList()
-
-                // 🔥 여기 숫자 두개 바꾸면 됨
-                if (!myMedalList.contains(10)) {
-                    myMedalList.add(10)
-
-                    // 다시 문자열로 합치기
-                    val updatedMedal = myMedalList.joinToString("/")
-
-                    // DB 업데이트
-                    userDao.update(
-                        id = "etc",
-                        value3 = updatedMedal
-                    )
+                val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+                val (updatedMedal, acquired) = tryAcquireMedal(currentMedals, 10)
+                if (acquired) {
+                    userDao.update(id = "etc", value3 = updatedMedal)
                     postSideEffect(StoreSideEffect.Toast("칭호를 획득했습니다!"))
                 }
                 return@intent
@@ -509,32 +494,15 @@ class StoreViewModel @Inject constructor(
     }
 
     fun onPurchaseSuccess() = intent {
-        // 🔥 여기 안에 광고 제거 / DB 저장 등
+        // 여기 안에 광고 제거 / DB 저장 등
         postSideEffect(StoreSideEffect.Toast("광고가 제거되었습니다!"))
         userDao.update(id = "name", value3 = "1")
 
         //매달, medal, 칭호29
-        val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-        val myMedalList: MutableList<Int> =
-            myMedal
-                .split("/")
-                .mapNotNull { it.toIntOrNull() }
-                .toMutableList()
-
-        // 🔥 여기 숫자 두개 바꾸면 됨
-        if (!myMedalList.contains(29)) {
-            myMedalList.add(29)
-
-            // 다시 문자열로 합치기
-            val updatedMedal = myMedalList.joinToString("/")
-
-            // DB 업데이트
-            userDao.update(
-                id = "etc",
-                value3 = updatedMedal
-            )
-
+        val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+        val (updatedMedal, acquired) = tryAcquireMedal(currentMedals, 29)
+        if (acquired) {
+            userDao.update(id = "etc", value3 = updatedMedal)
             postSideEffect(StoreSideEffect.Toast("칭호를 획득했습니다!"))
         }
 

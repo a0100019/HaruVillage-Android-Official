@@ -340,11 +340,11 @@ class NeighborInformationViewModel @Inject constructor(
             .collection("privateChat")
             .document(docId)
 
-        // 🔍 문서 존재 여부 확인
+        //  문서 존재 여부 확인
         docRef.get()
             .addOnSuccessListener { snapshot ->
                 if (snapshot.exists()) {
-                    // 🔥 이미 방이 존재
+                    //  이미 방이 존재
                     viewModelScope.launch {
                         intent {
                             postSideEffect(NeighborInformationSideEffect.Toast("이미 친구입니다."))
@@ -355,14 +355,14 @@ class NeighborInformationViewModel @Inject constructor(
                     return@addOnSuccessListener
                 }
 
-                // 📌 user 정렬
+                //  user 정렬
                 val u1 = if (myNum < yourNum) myTag else yourTag
                 val u2 = if (myNum < yourNum) yourTag else myTag
 
-                // 📌 내가 user1인지 여부
+                //  내가 user1인지 여부
                 val isMeUser1 = u1 == myTag
 
-                // 📌 이름 분기
+                //  이름 분기
                 val name1 = if (isMeUser1) {
                     state.userDataList.find { it.id == "name" }!!.value
                 } else {
@@ -375,7 +375,7 @@ class NeighborInformationViewModel @Inject constructor(
                     state.userDataList.find { it.id == "name" }!!.value
                 }
 
-                // 📌 방 생성 데이터
+                //  방 생성 데이터
                 val chatInitData = mapOf(
                     "user1" to u1,
                     "user2" to u2,
@@ -505,7 +505,7 @@ class NeighborInformationViewModel @Inject constructor(
                                                                     .mapNotNull { it.toIntOrNull() }
                                                                     .toMutableList()
 
-                                                            // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
+                                                            //  여기 숫자 두개랑 위에 // 바꾸면 됨
                                                             if (!myMedalList.contains(11)) {
                                                                 myMedalList.add(11)
 
@@ -627,7 +627,7 @@ class NeighborInformationViewModel @Inject constructor(
                                                                 .mapNotNull { it.toIntOrNull() }
                                                                 .toMutableList()
 
-                                                        // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
+                                                        //  여기 숫자 두개랑 위에 // 바꾸면 됨
                                                         if (!myMedalList.contains(11)) {
                                                             myMedalList.add(11)
 
@@ -784,7 +784,7 @@ class NeighborInformationViewModel @Inject constructor(
                     .mapNotNull { it.toIntOrNull() }
                     .toMutableList()
 
-            // 🔥 여기 숫자 두개 바꾸면 됨
+            //  여기 숫자 두개 바꾸면 됨
             if (!myMedalList.contains(28)) {
                 myMedalList.add(28)
 

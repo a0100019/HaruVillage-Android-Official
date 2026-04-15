@@ -72,7 +72,7 @@ fun PatImage(
             }
     }
 
-    // 🔥 핵심: 멈춰 있을 때 progress 계산 완전 중단
+    // 핵심: 멈춰 있을 때 progress 계산 완전 중단
     val animatedProgress by animateLottieCompositionAsState(
         composition = composition,
         isPlaying = isPlaying,

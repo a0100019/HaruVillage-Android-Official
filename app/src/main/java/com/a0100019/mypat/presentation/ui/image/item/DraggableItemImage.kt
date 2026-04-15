@@ -54,7 +54,7 @@ fun DraggableItemImage(
     val key = instanceKey ?: itemUrl
     val density = LocalDensity.current
 
-    // ✅ 내부에는 비율만 저장 (삭제/치환 시 꼬임 방지)
+    //  내부에는 비율만 저장 (삭제/치환 시 꼬임 방지)
     var posX by rememberSaveable(key) { mutableStateOf(xFloat) }
     var posY by rememberSaveable(key) { mutableStateOf(yFloat) }
 
@@ -93,7 +93,7 @@ fun DraggableItemImage(
                             shape = RoundedCornerShape(8.dp)
                         ) else Modifier
                     )
-                    // ✅ 제스처는 고유키에 묶어서 안정화
+                    //  제스처는 고유키에 묶어서 안정화
                     .pointerInput(key, surfaceWidthDp, surfaceHeightDp) {
                         detectDragGestures(
                             onDrag = { change, dragAmount ->
@@ -104,7 +104,7 @@ fun DraggableItemImage(
 
                                 posX = (posX + (dxDp / surfaceWidthDp)).coerceIn(0f, 1f)
                                 posY = (posY + (dyDp / surfaceHeightDp)).coerceIn(0f, 1f)
-                                // ✅ 드래그 중에는 ViewModel에 올리지 않음 (끊김 방지)
+                                //  드래그 중에는 ViewModel에 올리지 않음 (끊김 방지)
                             },
                             onDragEnd = { newFloat(posX, posY) },
                             onDragCancel = { newFloat(posX, posY) }
@@ -160,7 +160,7 @@ fun DraggableItemImage(
 
                                 posX = (posX + (dxDp / surfaceWidthDp)).coerceIn(0f, 1f)
                                 posY = (posY + (dyDp / surfaceHeightDp)).coerceIn(0f, 1f)
-                                // ✅ 드래그 중에는 ViewModel에 올리지 않음
+                                //  드래그 중에는 ViewModel에 올리지 않음
                             },
                             onDragEnd = { newFloat(posX, posY) },
                             onDragCancel = { newFloat(posX, posY) }

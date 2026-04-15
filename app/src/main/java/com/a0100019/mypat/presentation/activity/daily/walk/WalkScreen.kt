@@ -156,7 +156,7 @@ fun WalkScreen(
             val date = parts[0]
             val steps = parts[1].toInt()
 
-            // 🔥 last가 오늘 날짜일 때만 steps 적용
+            //  last가 오늘 날짜일 때만 steps 적용
             if (date == today) {
                 todaySteps = steps
             }
@@ -454,7 +454,7 @@ fun WalkScreen(
 
                         Spacer(modifier = Modifier.height(20.dp))
 
-                        // 📊 통계 섹션 헤더
+                        //  통계 섹션 헤더
                         Text(
                             text = "📊 걸음 수 통계",
                             style = MaterialTheme.typography.titleMedium,

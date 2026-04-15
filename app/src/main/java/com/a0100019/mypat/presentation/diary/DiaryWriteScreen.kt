@@ -137,12 +137,12 @@ fun DiaryWriteScreen(
     // 뒤로가기 다이얼로그 상태
     var showExitDialog by remember { mutableStateOf(false) }
 
-    // ✅ 다이얼로그 뜰 때는 뒤로가기 비활성화
+    //  다이얼로그 뜰 때는 뒤로가기 비활성화
     BackHandler(enabled = !showExitDialog) {
         showExitDialog = true
     }
 
-    // ✅ 다이얼로그 UI
+    //  다이얼로그 UI
     if (showExitDialog) {
         AlertDialog(
             onDismissRequest = { showExitDialog = false },
@@ -197,7 +197,7 @@ fun DiaryWriteScreen(
         emotionChangeClick = diaryWriteViewModel::emotionChangeClick,
         onDialogStateChange = diaryWriteViewModel::onDialogStateChange,
         onImageSelected = { uri ->
-            // ✅ 여기서 뷰모델 호출!
+            //  여기서 뷰모델 호출!
             diaryWriteViewModel.handleImageSelection(context, uri)
         },
         deleteImage = diaryWriteViewModel::deleteImage
@@ -233,7 +233,7 @@ fun DiaryWriteScreen(
 
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
-    // 🔹 감정 선택 다이얼로그
+    //  감정 선택 다이얼로그
     if (dialogState == "emotion") {
         DiaryEmotionDialog(
             onClose = { onDialogStateChange("") },
@@ -260,7 +260,7 @@ fun DiaryWriteScreen(
         )
     }
 
-    // 🔹 작성 완료 다이얼로그
+    //  작성 완료 다이얼로그
     if (writeFinish && firstWrite) {
         DiaryFirstFinishDialog(
             onClose = { popBackStack() },
@@ -342,7 +342,7 @@ fun DiaryWriteScreen(
 
                 }
 
-                // ✅ 갤러리 런처 정의
+                //  갤러리 런처 정의
                 val galleryLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.GetContent()
                 ) { uri: Uri? ->
@@ -363,7 +363,7 @@ fun DiaryWriteScreen(
 
                     val realSave = writePossible && !isPhotoLoading
 
-                    // 💾 저장 버튼 (파스텔톤)
+                    //  저장 버튼 (파스텔톤)
                     val backgroundColor by animateColorAsState(
                         targetValue = if (realSave) Color(0xFFB7E4C7) else Color(0xFFEAEAEA),
                         label = "buttonBackground"

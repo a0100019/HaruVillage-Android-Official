@@ -136,7 +136,7 @@ fun MusicPlayer(
         }
     }
 
-    // 🔹 앱이 백그라운드(ON_STOP) 되면 일시정지, 포그라운드(ON_START)면 재개(원하면 주석 처리)
+    // 앱이 백그라운드(ON_STOP) 되면 일시정지, 포그라운드(ON_START)면 재개(원하면 주석 처리)
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             when (event) {

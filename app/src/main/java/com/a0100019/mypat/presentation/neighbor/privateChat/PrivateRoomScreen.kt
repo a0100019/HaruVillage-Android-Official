@@ -223,7 +223,7 @@ fun PrivateRoomScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
 
-                                // 🌈 왼쪽 컬러 버블 (프로필 느낌)
+                                //  왼쪽 컬러 버블 (프로필 느낌)
                                 Box(
                                     modifier = Modifier
                                         .size(44.dp)

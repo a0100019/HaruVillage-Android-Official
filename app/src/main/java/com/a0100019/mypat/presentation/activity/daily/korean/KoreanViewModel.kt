@@ -6,6 +6,7 @@ import com.a0100019.mypat.data.room.koreanIdiom.KoreanIdiomDao
 import com.a0100019.mypat.data.room.user.User
 import com.a0100019.mypat.data.room.user.UserDao
 import com.a0100019.mypat.presentation.diary.DiarySideEffect
+import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import org.orbitmvi.orbit.Container
@@ -62,27 +63,10 @@ class KoreanViewModel @Inject constructor(
 
         if(koreanDataList.count {it.state == "별"} >= 10) {
             //매달, medal, 칭호6
-            val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-            val myMedalList: MutableList<Int> =
-                myMedal
-                    .split("/")
-                    .mapNotNull { it.toIntOrNull() }
-                    .toMutableList()
-
-            // 🔥 여기 숫자 두개 바꾸면 됨
-            if (!myMedalList.contains(6)) {
-                myMedalList.add(6)
-
-                // 다시 문자열로 합치기
-                val updatedMedal = myMedalList.joinToString("/")
-
-                // DB 업데이트
-                userDao.update(
-                    id = "etc",
-                    value3 = updatedMedal
-                )
-
+            val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+            val (updatedMedal, acquired) = tryAcquireMedal(currentMedals, 6)
+            if (acquired) {
+                userDao.update(id = "etc", value3 = updatedMedal)
                 postSideEffect(KoreanSideEffect.Toast("칭호를 획득했습니다!"))
             }
         }

@@ -13,6 +13,7 @@ import com.a0100019.mypat.data.room.user.UserDao
 import com.a0100019.mypat.data.room.world.WorldDao
 import com.a0100019.mypat.presentation.main.management.addMedalAction
 import com.a0100019.mypat.presentation.main.management.getMedalActionCount
+import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -81,27 +82,10 @@ class IndexViewModel @Inject constructor(
         }
 
         //매달, medal, 칭호9
-        val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-        val myMedalList: MutableList<Int> =
-            myMedal
-                .split("/")
-                .mapNotNull { it.toIntOrNull() }
-                .toMutableList()
-
-        // 🔥 여기 숫자 두개 바꾸면 됨
-        if (!myMedalList.contains(9)) {
-            myMedalList.add(9)
-
-            // 다시 문자열로 합치기
-            val updatedMedal = myMedalList.joinToString("/")
-
-            // DB 업데이트
-            userDao.update(
-                id = "etc",
-                value3 = updatedMedal
-            )
-
+        val currentMedals9 = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+        val (updated9, acquired9) = tryAcquireMedal(currentMedals9, 9)
+        if (acquired9) {
+            userDao.update(id = "etc", value3 = updated9)
             postSideEffect(IndexSideEffect.Toast("칭호를 획득했습니다!"))
         }
     }
@@ -131,27 +115,10 @@ class IndexViewModel @Inject constructor(
 
             if(getMedalActionCount(medalData, actionId = 15) >= 10) {
                 //매달, medal, 칭호15
-                val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-                val myMedalList: MutableList<Int> =
-                    myMedal
-                        .split("/")
-                        .mapNotNull { it.toIntOrNull() }
-                        .toMutableList()
-
-                // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
-                if (!myMedalList.contains(15)) {
-                    myMedalList.add(15)
-
-                    // 다시 문자열로 합치기
-                    val updatedMedal = myMedalList.joinToString("/")
-
-                    // DB 업데이트
-                    userDao.update(
-                        id = "etc",
-                        value3 = updatedMedal
-                    )
-
+                val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+                val (updated, acquired) = tryAcquireMedal(currentMedals, 15)
+                if (acquired) {
+                    userDao.update(id = "etc", value3 = updated)
                     postSideEffect(IndexSideEffect.Toast("칭호를 획득했습니다!"))
                 }
             }
@@ -169,27 +136,10 @@ class IndexViewModel @Inject constructor(
 
             if(getMedalActionCount(medalData, actionId = 15) >= 10) {
                 //매달, medal, 칭호15
-                val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-                val myMedalList: MutableList<Int> =
-                    myMedal
-                        .split("/")
-                        .mapNotNull { it.toIntOrNull() }
-                        .toMutableList()
-
-                // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
-                if (!myMedalList.contains(15)) {
-                    myMedalList.add(15)
-
-                    // 다시 문자열로 합치기
-                    val updatedMedal = myMedalList.joinToString("/")
-
-                    // DB 업데이트
-                    userDao.update(
-                        id = "etc",
-                        value3 = updatedMedal
-                    )
-
+                val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+                val (updated, acquired) = tryAcquireMedal(currentMedals, 15)
+                if (acquired) {
+                    userDao.update(id = "etc", value3 = updated)
                     postSideEffect(IndexSideEffect.Toast("칭호를 획득했습니다!"))
                 }
             }
@@ -207,27 +157,10 @@ class IndexViewModel @Inject constructor(
 
             if(getMedalActionCount(medalData, actionId = 16) >= 10) {
                 //매달, medal, 칭호16
-                val myMedal = userDao.getAllUserData().find { it.id == "etc" }!!.value3
-
-                val myMedalList: MutableList<Int> =
-                    myMedal
-                        .split("/")
-                        .mapNotNull { it.toIntOrNull() }
-                        .toMutableList()
-
-                // 🔥 여기 숫자 두개랑 위에 // 바꾸면 됨
-                if (!myMedalList.contains(16)) {
-                    myMedalList.add(16)
-
-                    // 다시 문자열로 합치기
-                    val updatedMedal = myMedalList.joinToString("/")
-
-                    // DB 업데이트
-                    userDao.update(
-                        id = "etc",
-                        value3 = updatedMedal
-                    )
-
+                val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+                val (updated, acquired) = tryAcquireMedal(currentMedals, 16)
+                if (acquired) {
+                    userDao.update(id = "etc", value3 = updated)
                     postSideEffect(IndexSideEffect.Toast("칭호를 획득했습니다!"))
                 }
             }

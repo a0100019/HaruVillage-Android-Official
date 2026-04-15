@@ -130,7 +130,7 @@ fun BoardSubmitDialog(
                         Text(text = "익명")
                     }
 
-                    // ✅ 갤러리 런처 정의
+                    //  갤러리 런처 정의
                     val galleryLauncher = rememberLauncherForActivityResult(
                         contract = ActivityResultContracts.GetContent()
                     ) { uri: Uri? ->

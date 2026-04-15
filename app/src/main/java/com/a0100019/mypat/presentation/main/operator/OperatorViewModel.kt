@@ -394,7 +394,7 @@ class OperatorViewModel @Inject constructor(
             "state" to "open"
         )
 
-        // ✅ 필드명: "90" + state.tag
+        //  필드명: "90" + state.tag
         val fieldKey = "90${state.text3}"
 
         Firebase.firestore

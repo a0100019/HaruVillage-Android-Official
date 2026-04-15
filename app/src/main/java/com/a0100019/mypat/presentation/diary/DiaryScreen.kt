@@ -103,7 +103,7 @@ fun DiaryScreen(
     val diaryState: DiaryState = diaryViewModel.collectAsState().value
     val context = LocalContext.current
 
-    // 🔹 권한 요청 후 재사용할 시간
+    // 권한 요청 후 재사용할 시간
     var pendingTime by remember { mutableStateOf<String?>(null) }
 
     val notificationPermissionLauncher =
@@ -125,7 +125,7 @@ fun DiaryScreen(
             pendingTime = null
         }
 
-    // 🔹 SideEffect 수신
+    // SideEffect 수신
     diaryViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
 
@@ -169,7 +169,7 @@ fun DiaryScreen(
         }
     }
 
-    // 🔹 실제 UI 화면 (이름 충돌 없게 분리되어 있다고 가정)
+    // 실제 UI 화면 (이름 충돌 없게 분리되어 있다고 가정)
     DiaryScreen(
         diaryDataList = diaryState.diaryFilterDataList,
         clickDiaryData = diaryState.clickDiaryData,

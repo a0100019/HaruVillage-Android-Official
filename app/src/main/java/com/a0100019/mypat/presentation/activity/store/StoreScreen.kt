@@ -65,7 +65,7 @@ fun StoreScreen(
     val storeState: StoreState = storeViewModel.collectAsState().value
 
     val context = LocalContext.current
-    val activity = context as? Activity   // ✅ 프리뷰 안전
+    val activity = context as? Activity   // 프리뷰 안전
 
 //    // 🔑 결제 이벤트 연결 (한 번만)
 //    LaunchedEffect(Unit) {

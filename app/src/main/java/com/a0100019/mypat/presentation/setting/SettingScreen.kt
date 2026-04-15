@@ -68,7 +68,7 @@ fun SettingScreen(
     val context = LocalContext.current
     val settingState = settingViewModel.collectAsState().value
 
-    // 🔹 SideEffect 처리
+    // SideEffect 처리
     settingViewModel.collectSideEffect { sideEffect ->
         when (sideEffect) {
             is SettingSideEffect.Toast ->
@@ -84,7 +84,7 @@ fun SettingScreen(
         }
     }
 
-    // 🔹 Google 로그인 launcher (LoginScreen과 동일)
+    // Google 로그인 launcher (LoginScreen과 동일)
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -129,7 +129,7 @@ fun SettingScreen(
         onReviewClick = settingViewModel::onReviewClick,
         loadNotice = settingViewModel::loadNotice,
 
-        // 🔥 여기서 연결
+        // 여기서 연결
         onGoogleLoginChangeClick = {
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(context.getString(R.string.default_web_client_id))
@@ -444,7 +444,7 @@ fun SettingScreen(
                     )
                 } else {
 
-                    // ✅ 구글 로그인 버튼
+                    // 구글 로그인 버튼
                     Button(
                         onClick = onGoogleLoginChangeClick,
                         colors = ButtonDefaults.buttonColors(

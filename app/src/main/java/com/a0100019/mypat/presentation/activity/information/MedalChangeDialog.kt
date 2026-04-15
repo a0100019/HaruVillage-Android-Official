@@ -105,7 +105,7 @@ fun MedalChangeDialog(
                                 .mapNotNull { it.toIntOrNull() }
                                 .drop(1)
 
-                        // 🔥 가진 메달만 Grid에 표시
+                        //  가진 메달만 Grid에 표시
                         items(myMedalList) { medalId ->
 
                             Box(

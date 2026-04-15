@@ -59,7 +59,7 @@ fun LoginLoadingDialog(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // 💬 안내 문구
+                // 안내 문구
                 Text(
                     text = "로딩 중...",
                     style = MaterialTheme.typography.bodyMedium.copy(

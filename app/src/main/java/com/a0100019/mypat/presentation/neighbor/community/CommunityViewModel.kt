@@ -146,7 +146,7 @@ class CommunityViewModel @Inject constructor(
             )
         }
 
-        // 🔹 allUserDataList에 100명 전체 저장, page 0 기준 첫 4명 보여주기
+        //  allUserDataList에 100명 전체 저장, page 0 기준 첫 4명 보여주기
         reduce {
             state.copy(
                 allUserDataList = users,

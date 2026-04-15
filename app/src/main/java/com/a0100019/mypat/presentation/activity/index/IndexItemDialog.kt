@@ -81,7 +81,7 @@ fun IndexItemDialog(
                         .padding(bottom = 16.dp)
                 )
 
-                // 🖼️ 이미지 박스
+                // ️ 이미지 박스
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

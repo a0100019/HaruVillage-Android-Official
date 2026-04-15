@@ -155,7 +155,7 @@ class LoginViewModel @Inject constructor(
                 if (isNewUser) {
                     val db = FirebaseFirestore.getInstance()
 
-                    // 🔹 Tag 계산
+                    //  Tag 계산
                     val lastKey: Int = withContext(Dispatchers.IO) {
                         val snapshot = db.collection("tag")
                             .document("tag")
@@ -167,16 +167,16 @@ class LoginViewModel @Inject constructor(
 
                     val nextKey = (lastKey + 1).toString()
 
-                    // 🔹 Local DB
+                    //  Local DB
                     userDao.update(id = "auth", value = it.uid, value2 = nextKey)
 
-                    // 🔹 Firestore Tag
+                    //  Firestore Tag
                     db.collection("tag")
                         .document("tag")
                         .update(nextKey, it.uid)
                         .await()
 
-                    // 🔹 초기 데이터
+                    //  초기 데이터
                     val currentDate =
                         LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
@@ -184,7 +184,7 @@ class LoginViewModel @Inject constructor(
                     userDao.update(id = "selectPat", value3 = "1")
 //                    letterDao.updateDateByTitle("시작의 편지", currentDate)
 
-                    // 🔹 Firestore User
+                    //  Firestore User
                     db.collection("users")
                         .document(it.uid)
                         .set(
@@ -203,7 +203,7 @@ class LoginViewModel @Inject constructor(
                     Log.e("login", "기존 익명 사용자 세션 재사용")
                 }
 
-                // ✅ 성공 시
+                //  성공 시
                 reduce {
                     state.copy(
                         dialog = "explanation",
@@ -215,7 +215,7 @@ class LoginViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.e("login", "익명 로그인 실패", e)
 
-            // ❌ 실패 시 unLogin 복귀
+            //  실패 시 unLogin 복귀
             reduce {
                 state.copy(loginState = "unLogin")
             }
@@ -236,7 +236,7 @@ class LoginViewModel @Inject constructor(
 
         if (state.isLoggingIn) return@intent
 
-        // 🔹 로그인 시작 상태
+        //  로그인 시작 상태
         reduce {
             state.copy(
                 isLoggingIn = true,
@@ -257,7 +257,7 @@ class LoginViewModel @Inject constructor(
             user?.let {
                 if (isNewUser) {
 
-                    // 🔹 신규 사용자일 때만 실행되는 코드
+                    //  신규 사용자일 때만 실행되는 코드
                     val db = FirebaseFirestore.getInstance()
 
                     //tag 설정
@@ -335,7 +335,7 @@ class LoginViewModel @Inject constructor(
 
                 } else {
 
-                    // 🔹 기존 사용자일 경우 처리
+                    //  기존 사용자일 경우 처리
                     Log.e("login", "기존 사용자입니다")
 
                     // Firestore에서 유저 데이터 가져오기
@@ -344,7 +344,7 @@ class LoginViewModel @Inject constructor(
                         val userDoc = db.collection("users").document(it.uid).get().await()
                         if (userDoc.exists()) {
 
-                            // 🔹 online 필드 확인
+                            //  online 필드 확인
                             val online = userDoc.getString("online")
                             if (online == "1") {
                                 if(state.dialog != "check"){
@@ -358,7 +358,7 @@ class LoginViewModel @Inject constructor(
                                     return@intent // 또는 return (코루틴/함수 구조에 따라)
                                 }
                             } else {
-                                // 🔹 online 필드가 0이면 1로 업데이트
+                                //  online 필드가 0이면 1로 업데이트
                                 db.collection("users").document(it.uid)
                                     .update("online", "1")
                                     .addOnSuccessListener {
@@ -489,7 +489,7 @@ class LoginViewModel @Inject constructor(
 // dailyDocs 반복문 내부
                                 val photoMap = dailyDoc.get("photo") as? Map<*, *>
                                 if (photoMap != null) {
-                                    // ⭐ 키(1, 2, 3...)를 숫자로 바꿔서 오름차순 정렬 후 순서대로 처리
+                                    //  키(1, 2, 3...)를 숫자로 바꿔서 오름차순 정렬 후 순서대로 처리
                                     val sortedPhotos = photoMap.toList().sortedByDescending { (key, _) ->
                                         key.toString().toIntOrNull() ?: Int.MAX_VALUE
                                     }
@@ -521,7 +521,7 @@ class LoginViewModel @Inject constructor(
                                     }
                                 }
 
-                                // ✅ state 필드가 존재할 경우에만 처리
+                                //  state 필드가 존재할 경우에만 처리
                                 val stateMap = dailyDoc.get("state") as? Map<*, *>
                                 val englishState = stateMap?.get("english") as? String
                                 val koreanIdiomState = stateMap?.get("koreanIdiom") as? String
@@ -852,7 +852,7 @@ class LoginViewModel @Inject constructor(
                                 .mapNotNull { it.toIntOrNull() }
                                 .toMutableList()
 
-                        // 🔥 여기 숫자 두개 바꾸면 됨
+                        //  여기 숫자 두개 바꾸면 됨
                         if (!myMedalList.contains(22)) {
                             myMedalList.add(22)
 
@@ -935,7 +935,7 @@ class LoginViewModel @Inject constructor(
                 .mapNotNull { it.toIntOrNull() }
                 .toMutableList()
 
-        // 🔥 여기 숫자 두개 바꾸면 됨
+        //  여기 숫자 두개 바꾸면 됨
         if (!myMedalList.contains(1)) {
             myMedalList.add(1)
 

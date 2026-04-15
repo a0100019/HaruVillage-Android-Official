@@ -113,7 +113,7 @@ fun MainScreen(
             }
             MainSideEffect.NavigateToDailyScreen -> onDailyNavigateClick()
             MainSideEffect.ExitApp -> {
-                (context as? Activity)?.finish()  // ✅ 안전하게 앱 종료
+                (context as? Activity)?.finish()  // 안전하게 앱 종료
             }
         }
     }

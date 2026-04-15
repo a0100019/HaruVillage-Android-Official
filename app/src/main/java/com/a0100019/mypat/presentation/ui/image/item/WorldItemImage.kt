@@ -42,7 +42,7 @@ fun WorldItemImage(
         surfaceWidthDp * sizeFloat
     }
 
-    // 🔥 modifier에서 클릭 처리 (PatImage 방식)
+    //  modifier에서 클릭 처리 (PatImage 방식)
     val modifier = remember(
         surfaceWidthDp,
         surfaceHeightDp,
@@ -69,7 +69,7 @@ fun WorldItemImage(
     }
 
     // =========================
-    // 🔥 LOTTIE ITEM
+    //  LOTTIE ITEM
     // =========================
     if (itemUrl.endsWith(".json")) {
 
@@ -97,7 +97,7 @@ fun WorldItemImage(
 
     } else {
         // =========================
-        // 🖼️ BITMAP ITEM
+        // ️ BITMAP ITEM
         // =========================
         val context = LocalContext.current
         var bitmap by remember { mutableStateOf<Bitmap?>(null) }

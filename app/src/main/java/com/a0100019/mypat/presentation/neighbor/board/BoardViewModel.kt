@@ -180,7 +180,7 @@ class BoardViewModel @Inject constructor(
                     val updatedList = if (currentPage == 1) {
                         newBoardMessages // 1페이지면 새로 시작
                     } else {
-                        // 🔥 중요: 새 데이터(더 과거)를 '앞'에 추가
+                        //  중요: 새 데이터(더 과거)를 '앞'에 추가
                         newBoardMessages + state.boardMessages
                     }
 
@@ -253,7 +253,7 @@ class BoardViewModel @Inject constructor(
 
     fun onBoardSubmitClick() = intent {
 
-        // 🔒 이미 전송 중이면 무시
+        //  이미 전송 중이면 무시
         if (state.isSubmitting) return@intent
 
         val currentMessage = state.text.trim()
@@ -263,7 +263,7 @@ class BoardViewModel @Inject constructor(
             return@intent
         }
 
-        // 🔒 전송 시작
+        //  전송 시작
         reduce {
             state.copy(isSubmitting = true)
         }
@@ -333,7 +333,7 @@ class BoardViewModel @Inject constructor(
             }
             .addOnFailureListener {
                 viewModelScope.launch {
-                    // ❌ 실패 시도 다시 가능
+                    //  실패 시도 다시 가능
                     reduce {
                         state.copy(isSubmitting = false)
                     }

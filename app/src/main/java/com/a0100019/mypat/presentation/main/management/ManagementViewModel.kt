@@ -94,7 +94,7 @@ class ManagementViewModel @Inject constructor(
         val tag = userDao.getValue2ById("auth")
 
         try {
-            // 🔹 Firestore 문서 가져오기 (대기)
+            //  Firestore 문서 가져오기 (대기)
             val snapshot = letterDocRef.get().await()
             if (!snapshot.exists()) return@intent
 
@@ -102,7 +102,7 @@ class ManagementViewModel @Inject constructor(
                 snapshot.data as? Map<String, Map<String, String>>
                     ?: return@intent
 
-            // 🔹 모든 편지 순차 처리
+            //  모든 편지 순차 처리
             letterMap.forEach { (key, value) ->
 
                 val baseId = key.toIntOrNull() ?: return@forEach
@@ -121,7 +121,7 @@ class ManagementViewModel @Inject constructor(
 
                 if (!shouldInsert) return@forEach
 
-                // ✅ Room id 계산 (순차라 안전)
+                //  Room id 계산 (순차라 안전)
                 val finalId = if (isPersonalLetter) {
                     val maxId = letterDao.getMaxIdStartingFrom(baseId)
                     (maxId ?: (baseId - 1)) + 1
@@ -142,7 +142,7 @@ class ManagementViewModel @Inject constructor(
 
                 letterDao.insertIgnore(letter)
 
-                // 🔥 개인 편지는 Firestore에서 삭제 (대기)
+                //  개인 편지는 Firestore에서 삭제 (대기)
                 if (shouldDelete) {
                     letterDocRef.update(key, FieldValue.delete()).await()
                 }
@@ -173,7 +173,7 @@ class ManagementViewModel @Inject constructor(
                 // community map
                 val communityMap = snapshot.get("community") as? Map<String, Any>
 
-                // ✅ like 값
+                //  like 값
                 val likeValue = communityMap?.get("like") as? String
                 if (likeValue != null) {
                     userDao.update(
@@ -183,7 +183,7 @@ class ManagementViewModel @Inject constructor(
                     Log.d("Firestore", "community.like 업데이트: $likeValue")
                 }
 
-                // ✅ ban 값 → value3에 저장
+                //  ban 값 → value3에 저장
                 val banValue = communityMap?.get("ban") as? String
                 if (banValue != null) {
                     userDao.update(
@@ -281,7 +281,7 @@ class ManagementViewModel @Inject constructor(
 
             )
 
-            // 🔹 월드 데이터 만들기
+            //  월드 데이터 만들기
             val worldMap = worldDataList.drop(1)
                 .mapIndexed { index, data ->
                     if (data.type == "pat") {

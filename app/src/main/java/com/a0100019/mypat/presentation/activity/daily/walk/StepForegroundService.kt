@@ -32,7 +32,7 @@ class StepForegroundService : Service(), SensorEventListener {
     override fun onCreate() {
         super.onCreate()
 
-        // 🔥 WAKE_LOCK 획득 (절전 모드에서도 유지)
+        //  WAKE_LOCK 획득 (절전 모드에서도 유지)
         val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
         wakeLock = pm.newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK,
@@ -60,7 +60,7 @@ class StepForegroundService : Service(), SensorEventListener {
 
         sensorManager.unregisterListener(this)
 
-        // 🔥 WAKE_LOCK 해제
+        //  WAKE_LOCK 해제
         if (wakeLock?.isHeld == true) {
             wakeLock?.release()
         }
@@ -75,7 +75,7 @@ class StepForegroundService : Service(), SensorEventListener {
 
 
     // ================================================================
-    // 🔥 걸음 수 저장 로직 (너가 작성한 것 그대로 둠)
+    //  걸음 수 저장 로직 (너가 작성한 것 그대로 둠)
     // ================================================================
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_STEP_COUNTER) {

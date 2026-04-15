@@ -68,7 +68,7 @@ fun StepProgressCircle(
             )
         )
 
-        // 🔥 100% 여부에 따라 색 선택
+        //  100% 여부에 따라 색 선택
         val ringBrush = if (progress >= 1f) fullGradient else normalGradient
 
         // ▣ 메인 링만 그리기 (Glow 제거됨)
