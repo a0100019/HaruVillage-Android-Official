@@ -1,57 +1,140 @@
-🏡 하루마을 (HaruMaul)
-지친 일상을 기록하고, 나만의 힐링 마을을 가꾸는 안드로이드 커뮤니티 서비스
+# 🏡 하루마을 (HaruVillage)
 
-단순한 기록을 넘어, 사용자가 앱 내 활동을 통해 성취감을 느끼고 타인과 따뜻한 소통을 나눌 수 있는 공간을 지향합니다.
+> 하루를 기록하고, 나만의 마을을 가꾸는 생활 습관 형성 안드로이드 앱
 
-📈 주요 성과
-실제 사용자 1,000명 이상 달성 및 운영
+매일의 일상을 일기로 남기고, 그 활동을 통해 얻은 재화로 마을을 꾸며가는 게이미피케이션 기반 커뮤니티 앱입니다.
+단순 기록을 넘어 **성취감**과 **따뜻한 소통**을 함께 제공하는 공간을 지향합니다.
 
-구글 플레이 스토어 정식 출시
+---
 
-사용자 피드백 기반 UI/UX 개선 (총 X회 업데이트)
+## 📈 주요 성과
 
-🚀 Key Features (핵심 기능)
-1. 사진 기반 힐링 게시판 📸
-소통의 장: 사용자가 사진과 글을 올려 일상을 공유하고, 댓글과 좋아요를 통해 타인과 소통할 수 있는 커뮤니티 기능을 구현했습니다.
+- 🏪 **Google Play Store 정식 출시 및 1년 6개월 운영**
+- 📥 누적 다운로드 **1,400+**
+- ⭐ 사용자 리뷰 **100+** / 평점 **4.9+**
+- 🔄 사용자 피드백 기반 지속적 업데이트 진행 중
 
-기술적 구현: Firebase Storage와 Firestore를 연동하여 이미지 업로드 및 실시간 데이터 업데이트를 처리했습니다.
+---
 
-2. 자동 저장 스마트 다이어리 ✍️
-편의성 극대화: 일기 작성 시 별도의 저장 버튼 없이도 작성 중인 내용이 실시간으로 안전하게 저장됩니다.
+## 🎬 앱 구동 화면
 
-기술적 도전: 작성 중 데이터 유실을 방지하기 위해 Coroutines와 Firebase의 실시간 동기화 로직을 최적화했습니다.
+<!-- 이곳에 GIF 첨부 예정 -->
 
-3. 마을 꾸미기 및 재화 시스템 🏠
-게이미피케이션: 앱 내 활동(일기 작성, 소통 등)을 통해 획득한 화폐로 아이템을 구매하고 나만의 마을을 꾸미는 기능을 제공하여 앱 리텐션을 높였습니다.
+---
 
-성취감 부여: 사용자가 자신의 기록이 마을의 성장으로 이어지는 시각적 경험을 제공합니다.
+## 🚀 핵심 기능
 
-🛠 Tech Stack (기술 스택)
-Android
-Language: Kotlin
+### 📓 스마트 다이어리
+- 감정 선택, 사진 첨부, 자유 텍스트 기록
+- **자동 저장**으로 앱 종료 시에도 데이터 유실 없음
+- 캘린더 뷰로 과거 일기 탐색 및 검색
+- 알림 예약으로 꾸준한 기록 습관 형성
 
-UI: Jetpack Compose (현대적인 선언형 UI 구현)
+### 🏘️ 마을 꾸미기 & 게이미피케이션
+- 일기 작성 · 걷기 등 활동으로 인앱 재화 획득
+- 재화로 배경, 건물, 장식 아이템 구매
+- 펫 수집 및 육성 시스템
+- 3종 미니게임으로 추가 보상 획득
+- 업적 메달 시스템으로 장기 리텐션 유도
 
-Architecture: MVVM (관심사 분리를 통한 유지보수성 향상)
+### 🚶 건강 관리
+- 걸음 수 실시간 측정 (Samsung Health Connect 연동)
+- Foreground Service로 백그라운드에서도 지속 추적
+- 주/월 단위 활동 통계 차트 제공
 
-Asynchronous: Coroutines
+### 👥 커뮤니티 & 소셜
+- 사진 기반 게시판으로 일상 공유
+- 좋아요 · 댓글 · 1:1 채팅 · 이웃 기능
+- Firestore 실시간 피드 동기화
 
-Backend (Infrastructure)
-Current: Firebase (Auth, Firestore, Storage)
+### 📚 학습 콘텐츠
+- 영어 단어 · 한국어 속담 · 스도쿠 · 상식 문제
+- 학습 완료 시 인앱 보상 지급
 
-In Progress 🚧: Spring Boot & MySQL 마이그레이션
+### 🔐 계정 관리
+- 게스트(익명) 로그인으로 즉시 시작
+- Google 소셜 로그인 지원
+- 게스트 → 정식 계정 업그레이드 가능
 
-서비스 확장성과 데이터 복잡도 해결을 위해 기존 Firebase 기능을 Kotlin 기반 Spring Boot API 서버로 이전 중입니다.
+---
 
-🔥 기술적 성장과 고민 (Troubleshooting)
-[고민 1] 사용자 1,000명의 데이터를 어떻게 효율적으로 관리할 것인가?
-문제: 사용자가 늘어남에 따라 Firebase의 NoSQL 구조에서 복잡한 랭킹이나 통계 쿼리를 처리할 때 비용과 속도 이슈가 예상되었습니다.
+## 🛠 기술 스택
 
-해결: 이를 계기로 관계형 데이터베이스(RDB)의 필요성을 느껴 Spring Boot와 MySQL을 도입하기로 결정했습니다. 현재 특정 기능을 API 서버로 분리하는 MSA(Microservice Architecture) 구조를 학습하며 적용 중입니다.
+| 분류 | 기술 |
+|------|------|
+| **언어** | Kotlin |
+| **UI** | Jetpack Compose, Material 3, Lottie |
+| **아키텍처** | Clean Architecture, MVVM + MVI (Orbit) |
+| **비동기** | Kotlin Coroutines, Flow |
+| **로컬 DB** | Room Database (14 Entity) |
+| **백엔드** | Firebase (Auth / Firestore / Storage / Analytics) |
+| **네트워크** | Retrofit 2, OkHttp |
+| **DI** | Dagger Hilt |
+| **백그라운드** | WorkManager, ForegroundService, AlarmManager |
+| **헬스** | Samsung Health Connect |
+| **AI** | Google Generative AI SDK |
+| **이미지** | Coil, Firebase Storage |
+| **차트** | YCharts |
 
-💻 설치 및 실행 방법
-저장소를 클론합니다. git clone https://github.com/유빈님아이디/HaruMaul.git
+---
 
-Android Studio에서 프로젝트를 엽니다.
+## 🏗️ 아키텍처
 
-구글 서비스 설정을 완료한 후 실행합니다.
+```
+Presentation Layer
+├── Jetpack Compose (UI)
+└── ViewModel (MVVM + MVI via Orbit)
+    └── Event → Intent → State → UI (단방향 데이터 흐름)
+
+Data Layer
+├── Room Database (로컬 캐싱, 오프라인 지원)
+│   └── 14 Entity: User, Diary, Walk, Item, World, Pat,
+│                   Photo, English, KoreanIdiom, Letter,
+│                   AllUser, Area, Knowledge, Sudoku
+├── Firebase (Auth, Firestore, Storage)
+└── Retrofit (REST API)
+
+DI: Dagger Hilt
+Background: WorkManager / ForegroundService / AlarmManager
+```
+
+**오프라인 우선 설계**: Room에 먼저 저장 후 Firestore로 동기화 → 네트워크 없이도 정상 동작, 연결 복구 시 자동 업로드
+
+---
+
+## 🔥 기술적 고민 & 해결
+
+### 1. 다이어리 작성 중 데이터 유실 방지
+- **문제**: 작성 완료 전 앱이 종료되면 내용이 사라지는 UX 이슈
+- **해결**: Flow collector로 입력 이벤트를 구독하여 Room에 즉시 로컬 저장 → 완료 시 Firestore 업로드하는 2단계 저장 구조로 변경
+
+### 2. Firebase의 복잡한 쿼리 한계
+- **문제**: 랭킹, 통계 등 복잡한 집계 쿼리를 Firestore에서 처리하기 어려움
+- **해결**: Spring Boot + MySQL 기반 API 서버로 단계적 마이그레이션 진행 중 (MSA 구조 학습 및 적용)
+
+### 3. DB 스키마 변경 시 사용자 데이터 유실 위험
+- **문제**: 앱 업데이트로 Room 스키마가 변경될 때 기존 설치 사용자 데이터 파괴 가능성
+- **해결**: Room Migration 스크립트(v2 → v3 → v4) 작성으로 기존 데이터를 보존하면서 무중단 업그레이드
+
+### 4. 백그라운드 걸음 수 추적 서비스 종료 문제
+- **문제**: Android OS의 배터리 최적화로 백그라운드 서비스가 강제 종료됨
+- **해결**: ForegroundService + 알림 채널 등록으로 시스템 종료 방지, BootReceiver로 기기 재시작 시 자동 복구
+
+---
+
+## 💻 설치 및 실행
+
+```bash
+git clone https://github.com/a0100019/HaruVillage-Android-Official.git
+```
+
+1. Android Studio에서 프로젝트 열기
+2. Firebase 프로젝트 생성 후 `google-services.json` 추가
+3. `local.properties`에 필요한 API 키 설정
+4. Run ▶️
+
+---
+
+## 🔗 링크
+
+- [Google Play Store](https://play.google.com/store/apps/details?id=com.a0100019.mypat)
