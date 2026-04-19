@@ -244,18 +244,9 @@ class PrivateChatInViewModel @Inject constructor(
             Log.e("PrivateChatIn", user1)
             Log.e("PrivateChatIn", user2)
 
-            val nameField: String
-            val lastField: String
-
-            when (myTag) {
-                user1 -> {
-                    nameField = "name1"
-                    lastField = "last1"
-                }
-                user2 -> {
-                    nameField = "name2"
-                    lastField = "last2"
-                }
+            val (nameField, lastField) = when (myTag) {
+                user1 -> "name1" to "last1"
+                user2 -> "name2" to "last2"
                 else -> {
                     Log.e("PrivateChatIn", "내 userId가 user1/user2와 일치하지 않음")
                     return@addOnSuccessListener

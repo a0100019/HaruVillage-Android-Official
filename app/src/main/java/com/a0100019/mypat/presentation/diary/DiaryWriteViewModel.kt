@@ -265,22 +265,7 @@ class DiaryWriteViewModel @Inject constructor(
             }
         }
 
-        // --- 광고 분기 처리 로직 ---
-        // 기존에 사진이 하나라도 있으면(photoDataList가 비어있지 않으면) 광고를 띄움
-        val shouldShowAd = state.photoDataList.isNotEmpty()
-
-        if (false) {
-            // [광고를 보여주는 경우]
-//            postSideEffect(DiaryWriteSideEffect.ShowInterstitialAd {
-//                isAdClosed.set(true)
-//                tryFinishLoading()
-//            })
-        } else {
-            // [첫 사진이라 광고를 안 보여주는 경우]
-            // 광고가 이미 닫힌 것으로 간주하여 true로 설정
-            isAdClosed.set(true)
-            // tryFinishLoading은 호출할 필요 없음 (업로드 끝나면 알아서 종료됨)
-        }
+        isAdClosed.set(true)
 
         // 2. [병렬 실행] 이미지 처리 및 업로드 (백그라운드)
         viewModelScope.launch(Dispatchers.IO) {
@@ -430,8 +415,6 @@ class DiaryWriteViewModel @Inject constructor(
     }
 
     fun onDiaryFinishClick() = intent {
-        println("내용 길이: ${state.writeDiaryData.contents.length}")
-
         if(state.writeDiaryData.contents.isNotEmpty()){
 
             //보상
@@ -465,19 +448,7 @@ class DiaryWriteViewModel @Inject constructor(
             state.copy(writeDiaryData = state.writeDiaryData.copy(contents = contentsText))
         }
 
-        if (contentsText.length > 0) {
-            reduce {
-                state.copy(
-                    writePossible = true,
-                )
-            }
-        } else {
-            reduce {
-                state.copy(
-                    writePossible = false,
-                )
-            }
-        }
+        reduce { state.copy(writePossible = contentsText.isNotEmpty()) }
     }
 
     fun onDialogStateChange(string: String) = intent {

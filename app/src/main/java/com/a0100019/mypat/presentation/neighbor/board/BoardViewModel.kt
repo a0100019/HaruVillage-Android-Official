@@ -281,7 +281,6 @@ class BoardViewModel @Inject constructor(
             "tag" to userTag,
             "ban" to userBan,
             "uid" to userId,
-            "like" to 0,
             "type" to state.boardType,
             "anonymous" to state.boardAnonymous,
             "photoFirebaseUrl" to state.photoFirebaseUrl,
@@ -343,40 +342,6 @@ class BoardViewModel @Inject constructor(
     }
 
 
-//    fun onAdClick() = intent {
-//
-//        if(state.removeAd == "0") {
-//            postSideEffect(BoardSideEffect.ShowRewardAd)
-//        } else {
-//            onRewardEarned()
-//        }
-//
-//    }
-
-//    fun showRewardAd(activity: Activity) {
-//        rewardAdManager.show(
-//            activity = activity,
-//            onReward = {
-//                onRewardEarned()
-//            },
-//            onNotReady = {
-//                intent {
-//                    postSideEffect(
-//                        BoardSideEffect.Toast(
-//                            "광고를 불러오는 중이에요. 잠시 후 다시 시도해주세요."
-//                        )
-//                    )
-//                }
-//            }
-//        )
-//    }
-//
-//    private fun onRewardEarned() = intent {
-//
-//        onBoardSubmitClick()
-//
-//    }
-
     private fun isNetworkAvailable(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork
@@ -406,22 +371,7 @@ class BoardViewModel @Inject constructor(
             }
         }
 
-        // --- 광고 분기 처리 로직 ---
-        // 기존에 사진이 하나라도 있으면(photoDataList가 비어있지 않으면) 광고를 띄움
-        val shouldShowAd = state.photoDataList.isNotEmpty()
-
-        if (false) {
-            // [광고를 보여주는 경우]
-//            postSideEffect(DiaryWriteSideEffect.ShowInterstitialAd {
-//                isAdClosed.set(true)
-//                tryFinishLoading()
-//            })
-        } else {
-            // [첫 사진이라 광고를 안 보여주는 경우]
-            // 광고가 이미 닫힌 것으로 간주하여 true로 설정
-            isAdClosed.set(true)
-            // tryFinishLoading은 호출할 필요 없음 (업로드 끝나면 알아서 종료됨)
-        }
+        isAdClosed.set(true)
 
         // 2. [병렬 실행] 이미지 처리 및 업로드 (백그라운드)
         viewModelScope.launch(Dispatchers.IO) {
