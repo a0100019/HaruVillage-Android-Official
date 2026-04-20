@@ -71,7 +71,6 @@ class ChatViewModel @Inject constructor(
         val patDataList = patDao.getAllPatData()
         val itemDataList = itemDao.getAllItemDataWithShadow()
         val allUserDataList = allUserDao.getAllUserDataNoBan()
-//        allUserDataList = allUserDataList.filter { it.totalDate != "1" && it.totalDate != "0" }
 
         val allAreaCount = areaDao.getAllAreaData().size.toString()
 
@@ -105,10 +104,10 @@ class ChatViewModel @Inject constructor(
             .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING) // 문서명(날짜) 내림차순 정렬
             .limit(12) // 최근 7개 문서만
             .addSnapshotListener { snapshot, error ->
-                Log.d("CommunityViewModel", "전체 채팅 스냅샷 수신됨")
+                Log.d("ChatViewModel", "전체 채팅 스냅샷 수신됨")
 
                 if (error != null) {
-                    Log.e("CommunityViewModel", "채팅 데이터 에러: ${error.message}")
+                    Log.e("ChatViewModel", "채팅 데이터 에러: ${error.message}")
                     return@addSnapshotListener
                 }
 
@@ -148,7 +147,7 @@ class ChatViewModel @Inject constructor(
 
                     }
                 } else {
-                    Log.w("CommunityViewModel", "chat 컬렉션에 문서가 없음")
+                    Log.w("ChatViewModel", "chat 컬렉션에 문서가 없음")
                 }
 
             }
@@ -290,37 +289,19 @@ class ChatViewModel @Inject constructor(
             }
     }
 
-    //입력 가능하게 하는 코드
     @OptIn(OrbitExperimental::class)
     fun onChatTextChange(chatText: String) = blockingIntent {
-
-//        if (chatText.length <= 50) {
-        reduce {
-            state.copy(newChat = chatText)
-        }
-//        }
+        reduce { state.copy(newChat = chatText) }
     }
 
-    //입력 가능하게 하는 코드
     @OptIn(OrbitExperimental::class)
     fun onTextChange2(text2: String) = blockingIntent {
-
-//        if (chatText.length <= 50) {
-        reduce {
-            state.copy(text2 = text2)
-        }
-//        }
+        reduce { state.copy(text2 = text2) }
     }
 
-    //입력 가능하게 하는 코드
     @OptIn(OrbitExperimental::class)
     fun onTextChange3(text3: String) = blockingIntent {
-
-//        if (chatText.length <= 50) {
-        reduce {
-            state.copy(text3 = text3)
-        }
-//        }
+        reduce { state.copy(text3 = text3) }
     }
 
     fun onBanClick(chatIndex: Int) = intent {
