@@ -77,12 +77,7 @@ class CommunityViewModel @Inject constructor(
         }
 
         randomGetAllUser()
-
-        onFirstGameRank()
-        onSecondGameRank()
-        onThirdGameEasyRank()
-        onThirdGameNormalRank()
-        onThirdGameHardRank()
+        loadAllRanks()
     }
 
     fun randomGetAllUser() = intent {
@@ -254,235 +249,58 @@ class CommunityViewModel @Inject constructor(
 
     }
 
-    //입력 가능하게 하는 코드
     @OptIn(OrbitExperimental::class)
     fun onChatTextChange(chatText: String) = blockingIntent {
-
-//        if (chatText.length <= 50) {
-            reduce {
-                state.copy(newChat = chatText)
-            }
-//        }
+        reduce { state.copy(newChat = chatText) }
     }
 
-    //입력 가능하게 하는 코드
     @OptIn(OrbitExperimental::class)
     fun onTextChange2(text2: String) = blockingIntent {
-
-//        if (chatText.length <= 50) {
-        reduce {
-            state.copy(text2 = text2)
-        }
-//        }
+        reduce { state.copy(text2 = text2) }
     }
 
-    //입력 가능하게 하는 코드
     @OptIn(OrbitExperimental::class)
     fun onTextChange3(text3: String) = blockingIntent {
-
-//        if (chatText.length <= 50) {
-        reduce {
-            state.copy(text3 = text3)
-        }
-//        }
+        reduce { state.copy(text3 = text3) }
     }
 
-    private fun onFirstGameRank() = intent {
+    private suspend fun loadRankList(documentName: String): List<Rank> {
+        val docSnap = Firebase.firestore
+            .collection("rank")
+            .document(documentName)
+            .get()
+            .await()
 
-        try {
-            val docSnap = Firebase.firestore
-                .collection("rank")
-                .document("firstGame")
-                .get()
-                .await()
+        if (!docSnap.exists()) return emptyList()
 
-            if (!docSnap.exists()) return@intent
-
-            val rankList = docSnap.data
-                ?.toList() // Map → List<Pair<String, Any>>
-                ?.sortedBy { (key, _) ->
-                    // "1", "10", "100" → 숫자 정렬
-                    key.toIntOrNull() ?: Int.MAX_VALUE
-                }
-                ?.mapNotNull { (_, value) ->
-                    val map = value as? Map<*, *> ?: return@mapNotNull null
-
-                    Rank(
-                        name = map["name"] as? String ?: "",
-                        tag = map["tag"] as? String ?: "",
-                        ban = map["ban"] as? String ?: "0",
-                        score = map["score"] as? String ?: "0",
-                    )
-                }
-                ?: emptyList()
-
-            reduce {
-                state.copy(
-                    firstGameRankList = rankList
+        return docSnap.data
+            ?.toList()
+            ?.sortedBy { (key, _) -> key.toIntOrNull() ?: Int.MAX_VALUE }
+            ?.mapNotNull { (_, value) ->
+                val map = value as? Map<*, *> ?: return@mapNotNull null
+                Rank(
+                    name = map["name"] as? String ?: "",
+                    tag = map["tag"] as? String ?: "",
+                    ban = map["ban"] as? String ?: "0",
+                    score = map["score"] as? String ?: "0",
                 )
             }
-
-        } catch (e: Exception) {
-            Log.e("Rank", "firstGame 랭킹 로드 실패", e)
-        }
+            ?: emptyList()
     }
 
-    private fun onSecondGameRank() = intent {
-
+    private fun loadAllRanks() = intent {
         try {
-            val docSnap = Firebase.firestore
-                .collection("rank")
-                .document("secondGame")
-                .get()
-                .await()
-
-            if (!docSnap.exists()) return@intent
-
-            val rankList = docSnap.data
-                ?.toList() // Map → List<Pair<String, Any>>
-                ?.sortedBy { (key, _) ->
-                    // "1", "10", "100" → 숫자 기준 정렬
-                    key.toIntOrNull() ?: Int.MAX_VALUE
-                }
-                ?.mapNotNull { (_, value) ->
-                    val map = value as? Map<*, *> ?: return@mapNotNull null
-
-                    Rank(
-                        name = map["name"] as? String ?: "",
-                        tag = map["tag"] as? String ?: "",
-                        ban = map["ban"] as? String ?: "0",
-                        score = map["score"] as? String ?: "0", // "39.829"
-                    )
-                }
-                ?: emptyList()
-
             reduce {
                 state.copy(
-                    secondGameRankList = rankList
+                    firstGameRankList = loadRankList("firstGame"),
+                    secondGameRankList = loadRankList("secondGame"),
+                    thirdGameEasyRankList = loadRankList("thirdGameEasy"),
+                    thirdGameNormalRankList = loadRankList("thirdGameNormal"),
+                    thirdGameHardRankList = loadRankList("thirdGameHard"),
                 )
             }
-
         } catch (e: Exception) {
-            Log.e("Rank", "secondGame 랭킹 로드 실패", e)
-        }
-    }
-
-
-    private fun onThirdGameEasyRank() = intent {
-
-        try {
-            val docSnap = Firebase.firestore
-                .collection("rank")
-                .document("thirdGameEasy")
-                .get()
-                .await()
-
-            if (!docSnap.exists()) return@intent
-
-            val rankList = docSnap.data
-                ?.toList()
-                ?.sortedBy { (key, _) ->
-                    key.toIntOrNull() ?: Int.MAX_VALUE
-                }
-                ?.mapNotNull { (_, value) ->
-                    val map = value as? Map<*, *> ?: return@mapNotNull null
-
-                    Rank(
-                        name = map["name"] as? String ?: "",
-                        tag = map["tag"] as? String ?: "",
-                        ban = map["ban"] as? String ?: "0",
-                        score = map["score"] as? String ?: "0",
-                    )
-                }
-                ?: emptyList()
-
-            reduce {
-                state.copy(
-                    thirdGameEasyRankList = rankList
-                )
-            }
-
-        } catch (e: Exception) {
-            Log.e("Rank", "thirdGameEasy 랭킹 로드 실패", e)
-        }
-    }
-
-
-    private fun onThirdGameNormalRank() = intent {
-
-        try {
-            val docSnap = Firebase.firestore
-                .collection("rank")
-                .document("thirdGameNormal")
-                .get()
-                .await()
-
-            if (!docSnap.exists()) return@intent
-
-            val rankList = docSnap.data
-                ?.toList()
-                ?.sortedBy { (key, _) ->
-                    key.toIntOrNull() ?: Int.MAX_VALUE
-                }
-                ?.mapNotNull { (_, value) ->
-                    val map = value as? Map<*, *> ?: return@mapNotNull null
-
-                    Rank(
-                        name = map["name"] as? String ?: "",
-                        tag = map["tag"] as? String ?: "",
-                        ban = map["ban"] as? String ?: "0",
-                        score = map["score"] as? String ?: "0",
-                    )
-                }
-                ?: emptyList()
-
-            reduce {
-                state.copy(
-                    thirdGameNormalRankList = rankList
-                )
-            }
-
-        } catch (e: Exception) {
-            Log.e("Rank", "thirdGameNormal 랭킹 로드 실패", e)
-        }
-    }
-
-    private fun onThirdGameHardRank() = intent {
-
-        try {
-            val docSnap = Firebase.firestore
-                .collection("rank")
-                .document("thirdGameHard")
-                .get()
-                .await()
-
-            if (!docSnap.exists()) return@intent
-
-            val rankList = docSnap.data
-                ?.toList()
-                ?.sortedBy { (key, _) ->
-                    key.toIntOrNull() ?: Int.MAX_VALUE
-                }
-                ?.mapNotNull { (_, value) ->
-                    val map = value as? Map<*, *> ?: return@mapNotNull null
-
-                    Rank(
-                        name = map["name"] as? String ?: "",
-                        tag = map["tag"] as? String ?: "",
-                        ban = map["ban"] as? String ?: "0",
-                        score = map["score"] as? String ?: "0",
-                    )
-                }
-                ?: emptyList()
-
-            reduce {
-                state.copy(
-                    thirdGameHardRankList = rankList
-                )
-            }
-
-        } catch (e: Exception) {
-            Log.e("Rank", "thirdGameHard 랭킹 로드 실패", e)
+            Log.e("Rank", "랭킹 로드 실패", e)
         }
     }
 
