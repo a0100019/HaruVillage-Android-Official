@@ -8,7 +8,6 @@ import com.a0100019.mypat.data.room.pat.PatDao
 import com.a0100019.mypat.data.room.sudoku.SudokuDao
 import com.a0100019.mypat.data.room.user.User
 import com.a0100019.mypat.data.room.user.UserDao
-import com.a0100019.mypat.presentation.game.secondGame.SecondGameSideEffect
 import com.a0100019.mypat.presentation.main.management.tryAcquireMedal
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -30,6 +29,14 @@ class ThirdGameViewModel @Inject constructor(
     private val patDao: PatDao,
     private val sudokuDao: SudokuDao,
 ) : ViewModel(), ContainerHost<ThirdGameState, ThirdGameSideEffect> {
+
+    companion object {
+        private const val ZEROS_EASY = 30
+        private const val ZEROS_MEDIUM = 40
+        private const val ZEROS_HARD = 50
+        private const val NO_SELECTION = "99"
+        private const val SUDOKU_TARGET_SUM = 45
+    }
 
     override val container: Container<ThirdGameState, ThirdGameSideEffect> = container(
         initialState = ThirdGameState(),
@@ -180,9 +187,7 @@ class ThirdGameViewModel @Inject constructor(
     }
 
     fun onEraserClick() = intent {
-
-        val row = state.clickedPuzzle[0].digitToInt()
-        val col = state.clickedPuzzle[1].digitToInt()
+        val (row, col) = parseClickedPosition(state.clickedPuzzle)
 
         val newSudoku = state.sudokuBoard.map { it.toMutableList() }.toMutableList()
         newSudoku[row][col] = "0"
@@ -196,14 +201,12 @@ class ThirdGameViewModel @Inject constructor(
                 sudokuMemoBoard = newMemoSudoku
             )
         }
-
     }
 
     fun onMemoNumberClick(number: Int) = intent {
 
-        if(state.clickedPuzzle != "99") {
-            val row = state.clickedPuzzle[0].digitToInt()
-            val col = state.clickedPuzzle[1].digitToInt()
+        if (state.clickedPuzzle != NO_SELECTION) {
+            val (row, col) = parseClickedPosition(state.clickedPuzzle)
 
             val newSudoku = state.sudokuMemoBoard.map { it.toMutableList() }.toMutableList()
 
@@ -231,98 +234,60 @@ class ThirdGameViewModel @Inject constructor(
 
     fun onNumberClick(number: Int) = intent {
 
-        if(state.clickedPuzzle != "99") {
-            val row = state.clickedPuzzle[0].digitToInt()
-            val col = state.clickedPuzzle[1].digitToInt()
+        if (state.clickedPuzzle != NO_SELECTION) {
+            val (row, col) = parseClickedPosition(state.clickedPuzzle)
 
             val newSudoku = state.sudokuBoard.map { it.toMutableList() }.toMutableList()
+            newSudoku[row][col] = if (state.sudokuBoard[row][col] == number.toString()) "0" else number.toString()
 
-            if(state.sudokuBoard[row][col] == number.toString()) {
-                newSudoku[row][col] = "0"
+            reduce { state.copy(sudokuBoard = newSudoku) }
+
+            if (isSudokuSolved(newSudoku)) {
+                // 성공
+                stopTimer()
+                sudokuDao.update(id = "state", value = "0")
+
+                val plusLove = when (state.level) {
+                    1 -> 300
+                    2 -> 750
+                    else -> 2500
+                }
+                val updatePatData = state.patData
+                updatePatData.love = state.patData.love + plusLove
+                updatePatData.gameCount = state.patData.gameCount + 1
+
+                if (state.patData.gameCount + 1 >= 100) {
+                    // 메달, 칭호4
+                    val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
+                    val (updatedMedal, acquired) = tryAcquireMedal(currentMedals, 4)
+                    if (acquired) {
+                        userDao.update(id = "etc", value3 = updatedMedal)
+                        postSideEffect(ThirdGameSideEffect.Toast("칭호를 획득했습니다!"))
+                    }
+                }
+
+                patDao.update(updatePatData)
+
+                userDao.update(
+                    id = "money",
+                    value2 = (state.userData.find { it.id == "money" }!!.value2.toInt() + plusLove).toString()
+                )
+
+                val current = state.userData.find { it.id == "thirdGame" }!!
+                when (state.level) {
+                    1 -> userDao.update(id = "thirdGame", value = (current.value.toInt() + 1).toString())
+                    2 -> userDao.update(id = "thirdGame", value2 = (current.value2.toInt() + 1).toString())
+                    3 -> userDao.update(id = "thirdGame", value3 = (current.value3.toInt() + 1).toString())
+                }
 
                 reduce {
                     state.copy(
-                        sudokuBoard = newSudoku
+                        gameState = "성공",
+                        plusLove = plusLove,
                     )
                 }
-
             } else {
-                newSudoku[row][col] = number.toString()
-
-                reduce {
-                    state.copy(
-                        sudokuBoard = newSudoku
-                    )
-                }
-
-            }
-
-            if (newSudoku.all { row -> row.all { it != "0" } }) {
-                var success = 0
-                // 0이 없으면 실행할 코드
-                repeat(9) { index ->
-                    val rowSum = newSudoku[index].sumOf { it.toInt() } // 각 문자(String)를 Int로 변환 후 합산
-                    if (rowSum != 45) {
-                        success++
-                    }
-                }
-
-                repeat(9) { col ->
-                    val colSum = newSudoku.sumOf { it[col].toInt() } // 각 열의 숫자를 Int로 변환 후 합산
-                    if (colSum != 45) {
-                        success++
-                    }
-                }
-
-                if (success == 0) {
-                    //성공
-                    stopTimer()
-                    sudokuDao.update(id = "state", value = "0" )
-
-                    val plusLove = when(state.level) {
-                        1 -> 300
-                        2 -> 750
-                        else -> 2500
-                    }
-                    val updatePatData = state.patData
-                    updatePatData.love = state.patData.love + plusLove
-                    updatePatData.gameCount = state.patData.gameCount + 1
-
-                    if(state.patData.gameCount + 1 >= 100) {
-
-                        //매달, medal, 칭호4
-                        val currentMedals = userDao.getAllUserData().find { it.id == "etc" }?.value3 ?: ""
-                        val (updatedMedal, acquired) = tryAcquireMedal(currentMedals, 4)
-                        if (acquired) {
-                            userDao.update(id = "etc", value3 = updatedMedal)
-                            postSideEffect(ThirdGameSideEffect.Toast("칭호를 획득했습니다!"))
-                        }
-
-                    }
-
-                    patDao.update(updatePatData)
-
-                    userDao.update(
-                        id = "money",
-                        value2 = (state.userData.find { it.id == "money" }!!.value2.toInt() + plusLove).toString()
-                    )
-
-                    val current = state.userData.find { it.id == "thirdGame" }!!
-                    when (state.level) {
-                        1 -> userDao.update(id = "thirdGame", value = (current.value.toInt() + 1).toString())
-                        2 -> userDao.update(id = "thirdGame", value2 = (current.value2.toInt() + 1).toString())
-                        3 -> userDao.update(id = "thirdGame", value3 = (current.value3.toInt() + 1).toString())
-                    }
-
-                    reduce {
-                        state.copy(
-                            gameState = "성공",
-                            plusLove = plusLove,
-                        )
-                    }
-                } else {
-                    postSideEffect(ThirdGameSideEffect.Toast("오류가 있습니다."))
-                }
+                postSideEffect(ThirdGameSideEffect.Toast("오류가 있습니다."))
             }
         }
 
@@ -330,23 +295,11 @@ class ThirdGameViewModel @Inject constructor(
 
     }
 
-    fun onPuzzleClick(rowIndex : Int, colIndex : Int) = intent {
-        if(state.clickedPuzzle == rowIndex.toString() + colIndex.toString()) {
-            reduce {
-                state.copy(
-                    clickedPuzzle = "99"
-                )
-            }
-        } else {
-            reduce {
-                state.copy(
-                    clickedPuzzle = rowIndex.toString() + colIndex.toString()
-                )
-            }
-        }
-
+    fun onPuzzleClick(rowIndex: Int, colIndex: Int) = intent {
+        val puzzleKey = "$rowIndex$colIndex"
+        val newSelection = if (state.clickedPuzzle == puzzleKey) NO_SELECTION else puzzleKey
+        reduce { state.copy(clickedPuzzle = newSelection) }
         saveData()
-
     }
 
     private fun makeSudoku(zeroNumber: Int) = intent {
@@ -386,16 +339,8 @@ class ThirdGameViewModel @Inject constructor(
 
         fillBoard()
 
-        val positions = mutableListOf<Pair<Int, Int>>()
-
-        // 모든 위치를 리스트에 추가
-        for (i in 0 until 9) {
-            for (j in 0 until 9) {
-                positions.add(i to j)
-            }
-        }
-
-        // 무작위로 섞고 처음 count 개만 선택하여 0으로 변경
+        // 무작위로 섞고 처음 zeroNumber 개만 선택하여 0으로 변경
+        val positions = (0 until 9).flatMap { i -> (0 until 9).map { j -> i to j } }
         positions.shuffled().take(zeroNumber).forEach { (row, col) ->
             board[row][col] = 0
         }
@@ -409,8 +354,20 @@ class ThirdGameViewModel @Inject constructor(
         ) }
     }
 
+    // 클릭된 퍼즐 위치를 (row, col)로 파싱
+    private fun parseClickedPosition(clickedPuzzle: String): Pair<Int, Int> {
+        return clickedPuzzle[0].digitToInt() to clickedPuzzle[1].digitToInt()
+    }
+
+    // 스도쿠 완성 여부 확인 (빈칸 없고 행·열 합계가 모두 45)
+    private fun isSudokuSolved(board: List<List<String>>): Boolean {
+        if (board.any { row -> row.any { it == "0" } }) return false
+        val rowsValid = (0 until 9).all { i -> board[i].sumOf { it.toInt() } == SUDOKU_TARGET_SUM }
+        val colsValid = (0 until 9).all { j -> board.sumOf { it[j].toInt() } == SUDOKU_TARGET_SUM }
+        return rowsValid && colsValid
+    }
+
     private fun stopTimer() {
-        //타이머 종료
         timerJob?.cancel()
     }
 
@@ -419,7 +376,7 @@ class ThirdGameViewModel @Inject constructor(
     private fun startTimer() {
         timerJob?.cancel() // 기존 타이머 중지
         timerJob = viewModelScope.launch {
-            val startTime = SystemClock.elapsedRealtime() - sudokuDao.getValueById("time").toDouble()*1000 // 시작 시간 기록
+            val startTime = SystemClock.elapsedRealtime() - (sudokuDao.getValueById("time").toDouble() * 1000) // 시작 시간 기록
             while (true) {
                 val elapsed = (SystemClock.elapsedRealtime() - startTime) / 1000.0 // 경과 시간(초)
                 intent {
@@ -432,10 +389,10 @@ class ThirdGameViewModel @Inject constructor(
 
     fun onLevelClick(level: Int) = intent {
 
-        when(level) {
-            1 -> makeSudoku(30)
-            2 -> makeSudoku(40)
-            3 -> makeSudoku(50)
+        when (level) {
+            1 -> makeSudoku(ZEROS_EASY)
+            2 -> makeSudoku(ZEROS_MEDIUM)
+            3 -> makeSudoku(ZEROS_HARD)
         }
 
         sudokuDao.update(id = "state", value = "1")
@@ -475,9 +432,6 @@ data class ThirdGameState(
     )
 
 
-//상태와 관련없는 것
-sealed interface ThirdGameSideEffect{
-    class Toast(val message:String): ThirdGameSideEffect
-//    data object NavigateToDailyActivity: LoadingSideEffect
-
+sealed interface ThirdGameSideEffect {
+    class Toast(val message: String) : ThirdGameSideEffect
 }
