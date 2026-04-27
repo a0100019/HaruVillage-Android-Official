@@ -8,7 +8,6 @@ import com.a0100019.mypat.data.room.user.User
 import com.a0100019.mypat.data.room.user.UserDao
 import com.a0100019.mypat.data.room.walk.Walk
 import com.a0100019.mypat.data.room.walk.WalkDao
-import com.a0100019.mypat.presentation.diary.DiarySideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -35,6 +34,19 @@ class WalkViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel(), ContainerHost<WalkState, WalkSideEffect> {
 
+    companion object {
+        private const val PREFS_NAME = "step_prefs"
+        private const val KEY_SAVE_STEPS = "saveSteps"
+        private const val KEY_STEPS_RAW = "stepsRaw"
+        private const val STEP_GOAL = 5000
+        private const val STEP_REWARD = 1
+        private const val DATE_FORMAT = "yyyy-MM-dd"
+        private const val MONTH_FORMAT = "yyyy-MM"
+    }
+
+    private val dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT)
+    private val monthFormatter = DateTimeFormatter.ofPattern(MONTH_FORMAT)
+
     override val container: Container<WalkState, WalkSideEffect> = container(
         initialState = WalkState(),
         buildSettings = {
@@ -55,16 +67,8 @@ class WalkViewModel @Inject constructor(
     private fun loadData() = intent {
         Log.d("WalkViewModel", "loadData 호출")
         val userDataList = userDao.getAllUserData()
-
-        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-        val prefs = context.getSharedPreferences("step_prefs", Context.MODE_PRIVATE)
-
-        //저장 걸음 수
-        val saveSteps = prefs.getInt("saveSteps", 0)
-
-        //걸음 수 기록
-        val stepsRaw = prefs.getString("stepsRaw", "$today.1") ?: "$today.1"
+        val today = LocalDate.now().format(dateFormatter)
+        val (saveSteps, stepsRaw) = readStepPrefs(today)
 
         userDao.update(id = "etc2", value2 = stepsRaw)
 
@@ -78,21 +82,6 @@ class WalkViewModel @Inject constructor(
                 baseDate = today
             )
         }
-
-        // stepsRaw → 날짜별 걸음수 Map
-        val items = stepsRaw.split("/").filter { it.isNotBlank() }
-        val walkMap = items
-            .mapNotNull {
-                val parts = it.split(".")
-                if (parts.size == 2) parts[0] to parts[1].toInt() else null
-            }
-            .toMap()
-        // 전체 걸음 수
-        val totalSteps = walkMap.values.sum()
-        if(totalSteps * 0.65 / 1000.0 >= 325.0) {
-
-        }
-
     }
 
     private var stepUpdateJob: Job? = null
@@ -109,18 +98,9 @@ class WalkViewModel @Inject constructor(
     }
 
     private fun loadData1() = intent {
-
-        Log.d("WalkViewModel", "loadData 호출")
-
-        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-        val prefs = context.getSharedPreferences("step_prefs", Context.MODE_PRIVATE)
-
-        //저장 걸음 수
-        val saveSteps = prefs.getInt("saveSteps", 0)
-
-        //걸음 수 기록
-        val stepsRaw = prefs.getString("stepsRaw", "$today.1") ?: "$today.1"
+        Log.d("WalkViewModel", "loadData1 호출")
+        val today = LocalDate.now().format(dateFormatter)
+        val (saveSteps, stepsRaw) = readStepPrefs(today)
 
         userDao.update(id = "etc2", value2 = stepsRaw)
 
@@ -130,7 +110,14 @@ class WalkViewModel @Inject constructor(
                 saveSteps = saveSteps,
             )
         }
+    }
 
+    // SharedPreferences에서 걸음수 관련 데이터를 읽어 반환
+    private fun readStepPrefs(today: String): Pair<Int, String> {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val saveSteps = prefs.getInt(KEY_SAVE_STEPS, 0)
+        val stepsRaw = prefs.getString(KEY_STEPS_RAW, "$today.1") ?: "$today.1"
+        return saveSteps to stepsRaw
     }
 
     override fun onCleared() {
@@ -141,30 +128,22 @@ class WalkViewModel @Inject constructor(
 
     fun onTodayWalkSubmitClick() = intent {
 
-        if(state.saveSteps >= 5000){
-
-            //보상
+        if (state.saveSteps >= STEP_GOAL) {
+            val currentMoney = state.userDataList.find { it.id == "money" }!!.value.toInt()
             userDao.update(
                 id = "money",
-                value = (state.userDataList.find { it.id == "money" }!!.value.toInt() + 1).toString()
+                value = (currentMoney + STEP_REWARD).toString()
             )
+
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit()
+                .putInt(KEY_SAVE_STEPS, 0)
+                .apply()
 
             val userDataList = userDao.getAllUserData()
 
-            postSideEffect(WalkSideEffect.Toast("햇살 +1"))
-
-            val prefs = context.getSharedPreferences("step_prefs", Context.MODE_PRIVATE)
-
-            prefs.edit()
-                .putInt("saveSteps", 0)
-                .apply()
-
-            reduce {
-                state.copy(
-                    saveSteps = 0,
-                    userDataList = userDataList
-                )
-            }
+            reduce { state.copy(saveSteps = 0, userDataList = userDataList) }
+            postSideEffect(WalkSideEffect.Toast("햇살 +$STEP_REWARD"))
 
         } else {
             postSideEffect(WalkSideEffect.Toast("걸음 수가 부족합니다"))
@@ -173,70 +152,33 @@ class WalkViewModel @Inject constructor(
     }
 
     fun onSituationChangeClick(situation: String) = intent {
-        when(situation) {
-            "month" -> reduce {
-                state.copy(
-                    situation = "month"
-                )
-            }
-            "week" -> reduce {
-                state.copy(
-                    situation = "week"
-                )
-            }
-            "record" -> reduce {
-                state.copy(
-                    situation = "record"
-                )
-            }
+        when (situation) {
+            "month", "week", "record" -> reduce { state.copy(situation = situation) }
         }
     }
 
     fun onCalendarMonthChangeClick(direction: String) = intent {
 
-        val today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-        if(state.situation == "month"){
-            val oldMonth = state.calendarMonth // 예: "2025-04"
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM")
-            val yearMonth = YearMonth.parse(oldMonth, formatter)
-
-            val newYearMonth = when (direction) {
-                "left" -> yearMonth.minusMonths(1)
-                "right" -> yearMonth.plusMonths(1)
-                else -> yearMonth
-            }
-
-            val newMonth = newYearMonth.format(formatter)
-            if (direction == "today") {
-                reduce {
-                    state.copy(
-                        calendarMonth = state.today.substring(0, 7)
-                    )
+        when (state.situation) {
+            "month" -> {
+                val yearMonth = YearMonth.parse(state.calendarMonth, monthFormatter)
+                val newMonth = when (direction) {
+                    "left"  -> yearMonth.minusMonths(1).format(monthFormatter)
+                    "right" -> yearMonth.plusMonths(1).format(monthFormatter)
+                    "today" -> state.today.substring(0, 7)
+                    else    -> state.calendarMonth
                 }
-            } else {
-                reduce {
-                    state.copy(
-                        calendarMonth = newMonth
-                    )
+                reduce { state.copy(calendarMonth = newMonth) }
+            }
+            "week" -> {
+                val oldDate = LocalDate.parse(state.baseDate, dateFormatter)
+                val newDate = when (direction) {
+                    "left"  -> oldDate.minusDays(7)
+                    "right" -> oldDate.plusDays(7)
+                    "today" -> LocalDate.parse(state.today)
+                    else    -> oldDate
                 }
-            }
-        } else if (state.situation == "week") {
-
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-            val oldDate = LocalDate.parse(state.baseDate, formatter)
-
-            val newDate = when (direction) {
-                "left" -> oldDate.minusDays(7)
-                "right" -> oldDate.plusDays(7)
-                "today" -> LocalDate.parse(state.today)
-                else -> oldDate
-            }
-
-            reduce {
-                state.copy(
-                    baseDate = newDate.format(formatter)
-                )
+                reduce { state.copy(baseDate = newDate.format(dateFormatter)) }
             }
         }
 
