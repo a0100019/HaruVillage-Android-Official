@@ -79,46 +79,26 @@ class InformationViewModel @Inject constructor(
         val allUserDataList = allUserDao.getAllUserDataNoBan()
         val worldDataList = worldDao.getAllWorldData()
 
-        if(allUserDataList.size > 4) {
+        if (allUserDataList.size > 4) {
 
-            // 높은 점수가 1등이라고 가정할 때
-            val firstGameRank = allUserDataList
-                .map { it.firstGame }       // 점수만 추출
-                .sortedDescending()          // 높은 점수 순으로 정렬
-                .count { it.toInt() > userDataList.find { it.id == "firstGame" }!!.value.toInt() } + 1  // myScore보다 작거나 같은 첫 점수의 순위
+            val myFirstGame  = userDataList.find { it.id == "firstGame" }!!.value.toInt()
+            val mySecondGame = userDataList.find { it.id == "secondGame" }!!.value.toDouble()
+            val myThirdGame  = userDataList.find { it.id == "thirdGame" }!!
 
-            val secondGameRank = allUserDataList
-                .map { it.secondGame }        // 점수만 추출
-                .sortedDescending()          // 높은 점수 순으로 정렬
-                .count { it.toDouble() < userDataList.find { it.id == "secondGame" }!!.value.toDouble() } + 1  // myScore보다 작거나 같은 첫 점수의 순위
-
-            val thirdGameEasyRank = allUserDataList
-                .map { it.thirdGameEasy }        // 점수만 추출
-                .sortedDescending()          // 높은 점수 순으로 정렬
-                .count { it.toInt() > userDataList.find { it.id == "thirdGame" }!!.value.toInt() } + 1  // myScore보다 작거나 같은 첫 점수의 순위
-
-            val thirdGameNormalRank = allUserDataList
-                .map { it.thirdGameNormal }        // 점수만 추출
-                .sortedDescending()          // 높은 점수 순으로 정렬
-                .count { it.toInt() > userDataList.find { it.id == "thirdGame" }!!.value2.toInt() } + 1  // myScore보다 작거나 같은 첫 점수의 순위
-
-            val thirdGameHardRank = allUserDataList
-                .map { it.thirdGameHard }        // 점수만 추출
-                .sortedDescending()          // 높은 점수 순으로 정렬
-                .count { it.toInt() > userDataList.find { it.id == "thirdGame" }!!.value3.toInt() } + 1  // myScore보다 작거나 같은 첫 점수의 순위
+            val firstGameRank       = allUserDataList.map { it.firstGame }.rankHigherBetter(myFirstGame)
+            val secondGameRank      = allUserDataList.map { it.secondGame }.rankLowerBetter(mySecondGame)
+            val thirdGameEasyRank   = allUserDataList.map { it.thirdGameEasy }.rankHigherBetter(myThirdGame.value.toInt())
+            val thirdGameNormalRank = allUserDataList.map { it.thirdGameNormal }.rankHigherBetter(myThirdGame.value2.toInt())
+            val thirdGameHardRank   = allUserDataList.map { it.thirdGameHard }.rankHigherBetter(myThirdGame.value3.toInt())
 
             reduce {
                 state.copy(
                     gameRankList = listOf(
-                        firstGameRank.toString(),
-                        secondGameRank.toString(),
-                        thirdGameEasyRank.toString(),
-                        thirdGameNormalRank.toString(),
-                        thirdGameHardRank.toString()
-                    )
+                        firstGameRank, secondGameRank,
+                        thirdGameEasyRank, thirdGameNormalRank, thirdGameHardRank
+                    ).map { it.toString() }
                 )
             }
-
         }
 
         reduce {
@@ -177,8 +157,6 @@ class InformationViewModel @Inject constructor(
     fun onMedalChangeClick(index: Int) = intent {
 
         val myMedal = state.userData.find { it.id == "etc" }?.value3 ?: ""
-
-        // 1️⃣ 문자열 → Int 리스트
         val medalList = myMedal
             .split("/")
             .mapNotNull { it.toIntOrNull() }
@@ -186,22 +164,10 @@ class InformationViewModel @Inject constructor(
 
         if (medalList.isEmpty()) return@intent
 
-        // 2️⃣ 첫 번째 값만 index로 교체
         medalList[0] = index
+        userDao.update(id = "etc", value3 = medalList.joinToString("/"))
 
-        // 3️⃣ 다시 문자열로 합치기
-        val updatedMedal = medalList.joinToString("/")
-
-        // 4️⃣ DB 업데이트
-        userDao.update(
-            id = "etc",
-            value3 = updatedMedal
-        )
-
-        postSideEffect(
-            InformationSideEffect.Toast("칭호를 변경하였습니다.")
-        )
-
+        postSideEffect(InformationSideEffect.Toast("칭호를 변경하였습니다."))
         onClose()
         loadData()
     }
@@ -238,10 +204,14 @@ data class InformationState(
     )
 
 
-//상태와 관련없는 것
-sealed interface InformationSideEffect{
-    class Toast(val message:String): InformationSideEffect
-
-//    data object NavigateToDailyActivity: LoadingSideEffect
-
+sealed interface InformationSideEffect {
+    class Toast(val message: String) : InformationSideEffect
 }
+
+// 높은 점수가 좋은 게임: 나보다 높은 사람 수 + 1
+private fun List<String>.rankHigherBetter(myScore: Int): Int =
+    sortedDescending().count { it.toInt() > myScore } + 1
+
+// 낮은 점수가 좋은 게임: 나보다 낮은 사람 수 + 1
+private fun List<String>.rankLowerBetter(myScore: Double): Int =
+    sortedDescending().count { it.toDouble() < myScore } + 1
