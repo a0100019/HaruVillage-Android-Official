@@ -18,7 +18,28 @@
 
 ## 🎬 앱 구동 화면
 
-<!-- GIF 추가 예정 -->
+<table>
+  <tr>
+    <td align="center"><img src="./assets/로그인.gif" width="200"/><br/>로그인</td>
+    <td align="center"><img src="./assets/내정보.gif" width="200"/><br/>내정보</td>
+    <td align="center"><img src="./assets/이웃마을.gif" width="200"/><br/>이웃마을</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./assets/전체채팅.gif" width="200"/><br/>전체채팅</td>
+    <td align="center"><img src="./assets/개인채팅.gif" width="200"/><br/>개인채팅</td>
+    <td align="center"><img src="./assets/맵 도감.gif" width="200"/><br/>맵 도감</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./assets/펫 도감.gif" width="200"/><br/>펫 도감</td>
+    <td align="center"><img src="./assets/사자성어.gif" width="200"/><br/>사자성어</td>
+    <td align="center"><img src="./assets/숫자게임.gif" width="200"/><br/>숫자게임</td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./assets/스도쿠.gif" width="200"/><br/>스도쿠</td>
+    <td align="center"><img src="./assets/컬링.gif" width="200"/><br/>컬링</td>
+    <td></td>
+  </tr>
+</table>
 
 ---
 
