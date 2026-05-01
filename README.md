@@ -20,39 +20,39 @@
 
 <table>
   <tr>
-    <td align="center"><img src="./assets/로그인.gif" width="200"/><br/>로그인</td>
-    <td align="center"><img src="./assets/내정보.gif" width="200"/><br/>내정보</td>
-    <td align="center"><img src="./assets/글씨체 변경.gif" width="200"/><br/>글씨체 변경</td>
+    <td align="center"><img src="./assets/로그인.gif" width="200"/><br/><b>로그인</b><br/><sub>설치 즉시 게스트로 시작, 언제든 Google 계정으로 업그레이드</sub></td>
+    <td align="center"><img src="./assets/내정보.gif" width="200"/><br/><b>내정보</b><br/><sub>칭호·인삿말을 설정해 나만의 프로필로 이웃에게 소개</sub></td>
+    <td align="center"><img src="./assets/글씨체 변경.gif" width="200"/><br/><b>글씨체 변경</b><br/><sub>취향에 맞는 폰트로 앱 전체 분위기를 한 번에 변경</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="./assets/마을 꾸미기.gif" width="200"/><br/>마을 꾸미기</td>
-    <td align="center"><img src="./assets/맵 도감.gif" width="200"/><br/>맵 도감</td>
-    <td align="center"><img src="./assets/펫 도감.gif" width="200"/><br/>펫 도감</td>
+    <td align="center"><img src="./assets/마을 꾸미기.gif" width="200"/><br/><b>마을 꾸미기</b><br/><sub>활동으로 모은 재화로 배경·건물·장식을 자유롭게 배치</sub></td>
+    <td align="center"><img src="./assets/맵 도감.gif" width="200"/><br/><b>맵 도감</b><br/><sub>수집한 맵과 미보유 맵을 한눈에 확인</sub></td>
+    <td align="center"><img src="./assets/펫 도감.gif" width="200"/><br/><b>펫 도감</b><br/><sub>보유한 펫과 미수집 펫을 도감 형식으로 탐색</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="./assets/펫 뽑기.gif" width="200"/><br/>펫 뽑기</td>
-    <td align="center"><img src="./assets/펫 키우기.gif" width="200"/><br/>펫 키우기</td>
-    <td align="center"><img src="./assets/이웃마을.gif" width="200"/><br/>이웃마을</td>
+    <td align="center"><img src="./assets/펫 뽑기.gif" width="200"/><br/><b>펫 뽑기</b><br/><sub>재화를 사용해 새로운 펫을 뽑는 설렘</sub></td>
+    <td align="center"><img src="./assets/펫 키우기.gif" width="200"/><br/><b>펫 키우기</b><br/><sub>매일 펫에게 밥을 주고 상호작용하며 함께 성장</sub></td>
+    <td align="center"><img src="./assets/이웃마을.gif" width="200"/><br/><b>이웃마을</b><br/><sub>이웃의 마을을 방문해 꾸밈새를 구경하고 인사 나누기</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="./assets/전체채팅.gif" width="200"/><br/>전체채팅</td>
-    <td align="center"><img src="./assets/개인채팅.gif" width="200"/><br/>개인채팅</td>
-    <td align="center"><img src="./assets/일기 달력.gif" width="200"/><br/>일기 달력</td>
+    <td align="center"><img src="./assets/전체채팅.gif" width="200"/><br/><b>전체채팅</b><br/><sub>모든 주민과 실시간으로 자유롭게 대화</sub></td>
+    <td align="center"><img src="./assets/개인채팅.gif" width="200"/><br/><b>개인채팅</b><br/><sub>마음이 맞는 이웃과 1:1로 조용히 대화</sub></td>
+    <td align="center"><img src="./assets/일기 달력.gif" width="200"/><br/><b>일기 달력</b><br/><sub>달력으로 지난 일기를 한눈에 되돌아보기</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="./assets/감정 필터.gif" width="200"/><br/>감정 필터</td>
-    <td align="center"><img src="./assets/사진보관함.gif" width="200"/><br/>사진보관함</td>
-    <td align="center"><img src="./assets/알림.gif" width="200"/><br/>알림</td>
+    <td align="center"><img src="./assets/감정 필터.gif" width="200"/><br/><b>감정 필터</b><br/><sub>기분별로 일기를 걸러 내 감정 패턴 돌아보기</sub></td>
+    <td align="center"><img src="./assets/사진보관함.gif" width="200"/><br/><b>사진보관함</b><br/><sub>일기에 남긴 사진들을 갤러리처럼 모아서 감상</sub></td>
+    <td align="center"><img src="./assets/알림.gif" width="200"/><br/><b>알림</b><br/><sub>원하는 시간에 알림을 받아 꾸준한 기록 습관 유지</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="./assets/사자성어.gif" width="200"/><br/>사자성어</td>
-    <td align="center"><img src="./assets/영어 단어.gif" width="200"/><br/>영어 단어</td>
-    <td align="center"><img src="./assets/상식 퀴즈.gif" width="200"/><br/>상식 퀴즈</td>
+    <td align="center"><img src="./assets/사자성어.gif" width="200"/><br/><b>사자성어</b><br/><sub>매일 새로운 사자성어를 배우고 보상 획득</sub></td>
+    <td align="center"><img src="./assets/영어 단어.gif" width="200"/><br/><b>영어 단어</b><br/><sub>짧은 시간 영어 단어를 학습하고 재화로 보상</sub></td>
+    <td align="center"><img src="./assets/상식 퀴즈.gif" width="200"/><br/><b>상식 퀴즈</b><br/><sub>다양한 분야의 상식 퀴즈로 지식을 넓히며 보상 획득</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="./assets/숫자게임.gif" width="200"/><br/>숫자게임</td>
-    <td align="center"><img src="./assets/스도쿠.gif" width="200"/><br/>스도쿠</td>
-    <td align="center"><img src="./assets/컬링.gif" width="200"/><br/>컬링</td>
+    <td align="center"><img src="./assets/숫자게임.gif" width="200"/><br/><b>숫자게임</b><br/><sub>숫자 조합으로 목표를 맞추는 두뇌 트레이닝</sub></td>
+    <td align="center"><img src="./assets/스도쿠.gif" width="200"/><br/><b>스도쿠</b><br/><sub>난이도별 스도쿠로 집중력을 키우고 랭킹 도전</sub></td>
+    <td align="center"><img src="./assets/컬링.gif" width="200"/><br/><b>컬링</b><br/><sub>손가락으로 즐기는 캐주얼 컬링 미니게임</sub></td>
   </tr>
 </table>
 
