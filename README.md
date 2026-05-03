@@ -48,22 +48,32 @@
   <tr>
     <td align="center"><img src="./assets/전체채팅.gif" width="200"/><br/><b>전체채팅</b><br/><sub>모든 주민과 실시간으로 자유롭게 대화</sub></td>
     <td align="center"><img src="./assets/개인채팅.gif" width="200"/><br/><b>개인채팅</b><br/><sub>마음이 맞는 이웃과 1:1로 조용히 대화</sub></td>
+    <td align="center"><img src="./assets/자유게시판.gif" width="200"/><br/><b>자유게시판</b><br/><sub>사진과 글로 일상을 이웃과 함께 나누는 게시판</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./assets/게시글과댓글.gif" width="200"/><br/><b>게시글과 댓글</b><br/><sub>이웃의 게시글에 좋아요와 댓글로 따뜻하게 소통</sub></td>
+    <td align="center"><img src="./assets/일기장.gif" width="200"/><br/><b>일기장</b><br/><sub>감정과 사진을 담아 오늘의 하루를 기록</sub></td>
     <td align="center"><img src="./assets/일기 달력.gif" width="200"/><br/><b>일기 달력</b><br/><sub>달력으로 지난 일기를 한눈에 되돌아보기</sub></td>
   </tr>
   <tr>
     <td align="center"><img src="./assets/감정 필터.gif" width="200"/><br/><b>감정 필터</b><br/><sub>기분별로 일기를 걸러 내 감정 패턴 돌아보기</sub></td>
     <td align="center"><img src="./assets/사진보관함.gif" width="200"/><br/><b>사진보관함</b><br/><sub>일기에 남긴 사진들을 갤러리처럼 모아서 감상</sub></td>
-    <td align="center"><img src="./assets/알림.gif" width="200"/><br/><b>알림</b><br/><sub>원하는 시간에 알림을 받아 꾸준한 기록 습관 유지</sub></td>
+    <td align="center"><img src="./assets/사진추가.gif" width="200"/><br/><b>사진 첨부</b><br/><sub>촬영 또는 갤러리에서 사진을 골라 일기에 바로 첨부</sub></td>
   </tr>
   <tr>
+    <td align="center"><img src="./assets/알림.gif" width="200"/><br/><b>알림</b><br/><sub>원하는 시간에 알림을 받아 꾸준한 기록 습관 유지</sub></td>
     <td align="center"><img src="./assets/사자성어.gif" width="200"/><br/><b>사자성어</b><br/><sub>매일 새로운 사자성어를 배우고 보상 획득</sub></td>
     <td align="center"><img src="./assets/영어 단어.gif" width="200"/><br/><b>영어 단어</b><br/><sub>짧은 시간 영어 단어를 학습하고 재화로 보상</sub></td>
-    <td align="center"><img src="./assets/상식 퀴즈.gif" width="200"/><br/><b>상식 퀴즈</b><br/><sub>다양한 분야의 상식 퀴즈로 지식을 넓히며 보상 획득</sub></td>
   </tr>
   <tr>
+    <td align="center"><img src="./assets/상식 퀴즈.gif" width="200"/><br/><b>상식 퀴즈</b><br/><sub>다양한 분야의 상식 퀴즈로 지식을 넓히며 보상 획득</sub></td>
     <td align="center"><img src="./assets/숫자게임.gif" width="200"/><br/><b>숫자게임</b><br/><sub>숫자 조합으로 목표를 맞추는 두뇌 트레이닝</sub></td>
     <td align="center"><img src="./assets/스도쿠.gif" width="200"/><br/><b>스도쿠</b><br/><sub>난이도별 스도쿠로 집중력을 키우고 랭킹 도전</sub></td>
+  </tr>
+  <tr>
     <td align="center"><img src="./assets/컬링.gif" width="200"/><br/><b>컬링</b><br/><sub>손가락으로 즐기는 캐주얼 컬링 미니게임</sub></td>
+    <td></td>
+    <td></td>
   </tr>
 </table>
 
