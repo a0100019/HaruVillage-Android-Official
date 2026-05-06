@@ -1,7 +1,6 @@
 package com.a0100019.mypat.presentation.activity.daily.walk
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a0100019.mypat.data.room.user.User
@@ -65,7 +64,6 @@ class WalkViewModel @Inject constructor(
     }
 
     private fun loadData() = intent {
-        Log.d("WalkViewModel", "loadData 호출")
         val userDataList = userDao.getAllUserData()
         val today = LocalDate.now().format(dateFormatter)
         val (saveSteps, stepsRaw) = readStepPrefs(today)
@@ -91,14 +89,14 @@ class WalkViewModel @Inject constructor(
 
         stepUpdateJob = viewModelScope.launch {
             while (isActive) {
-                loadData1()
-                delay(1000L) // ⏱ 1초
+                refreshStepData()
+                delay(1000L)
             }
         }
     }
 
-    private fun loadData1() = intent {
-        Log.d("WalkViewModel", "loadData1 호출")
+    // 1초마다 걸음 수만 갱신 (전체 데이터 재조회 없이 성능 최적화)
+    private fun refreshStepData() = intent {
         val today = LocalDate.now().format(dateFormatter)
         val (saveSteps, stepsRaw) = readStepPrefs(today)
 
@@ -189,15 +187,13 @@ class WalkViewModel @Inject constructor(
 @Immutable
 data class WalkState(
     val userDataList: List<User> = emptyList(),
-
-    val saveSteps: Int = 0, // ✅ 걸음 수 저장 (초기값 0)
+    val saveSteps: Int = 0,
     val stepsRaw: String = "",
-    val today: String = "2025-07-05",
-    val calendarMonth: String = "2025-07",
-    val baseDate: String = "2025-11-26",
+    val today: String = "",
+    val calendarMonth: String = "",
+    val baseDate: String = "",
     val situation: String = "record"
-
-    )
+)
 
 sealed interface WalkSideEffect {
     class Toast(val message: String) : WalkSideEffect
