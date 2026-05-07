@@ -1,6 +1,5 @@
 package com.a0100019.mypat.presentation.activity.daily.english
 
-import android.app.Activity
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import com.a0100019.mypat.data.room.english.English
@@ -29,6 +28,14 @@ class EnglishViewModel @Inject constructor(
     private val application: Application,
     private val rewardAdManager: RewardAdManager
 ) : ViewModel(), ContainerHost<EnglishState, EnglishSideEffect> {
+
+    companion object {
+        private const val REWARD_HARD_CORRECT = 2000
+        private const val REWARD_HARD_NORMAL = 500
+        private const val REWARD_EASY_CORRECT = 1000
+        private const val REWARD_EASY_NORMAL = 250
+        private const val WORD_LENGTH = 5
+    }
 
     override val container: Container<EnglishState, EnglishSideEffect> = container(
         initialState = EnglishState(),
@@ -87,86 +94,20 @@ class EnglishViewModel @Inject constructor(
 
     fun onAlphabetClick(alphabet: String) = intent {
         val englishTextList = state.englishTextList.toMutableList()
-
-        if(englishTextList[0] == " ") {
-            englishTextList[0] = alphabet
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
-        } else if(englishTextList[1] == " ") {
-            englishTextList[1] = alphabet
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
-        } else if(englishTextList[2] == " ") {
-            englishTextList[2] = alphabet
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
-        } else if(englishTextList[3] == " ") {
-            englishTextList[3] = alphabet
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
-        } else if(englishTextList[4] == " ") {
-            englishTextList[4] = alphabet
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
+        val emptyIndex = englishTextList.indexOfFirst { it == " " }
+        if (emptyIndex != -1) {
+            englishTextList[emptyIndex] = alphabet
+            reduce { state.copy(englishTextList = englishTextList) }
         }
     }
 
     fun onAlphabetDeleteClick() = intent {
-
         val englishTextList = state.englishTextList.toMutableList()
-
-        if(englishTextList[4] != " ") {
-            englishTextList[4] = " "
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
-        } else if(englishTextList[3] != " ") {
-            englishTextList[3] = " "
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
-        } else if(englishTextList[2] != " ") {
-            englishTextList[2] = " "
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
-        } else if(englishTextList[1] != " ") {
-            englishTextList[1] = " "
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
-        } else if(englishTextList[0] != " ") {
-            englishTextList[0] = " "
-            reduce {
-                state.copy(
-                    englishTextList = englishTextList
-                )
-            }
+        val lastFilledIndex = englishTextList.indexOfLast { it != " " }
+        if (lastFilledIndex != -1) {
+            englishTextList[lastFilledIndex] = " "
+            reduce { state.copy(englishTextList = englishTextList) }
         }
-
     }
 
     fun onHardSubmitClick() = intent {
@@ -182,20 +123,12 @@ class EnglishViewModel @Inject constructor(
                     val newClickEnglishData = state.clickEnglishData
                     newClickEnglishData!!.state = "완료"
 
-                    if(state.clickEnglishDataState == "어려움") {//보상
-                        userDao.update(
-                            id = "money",
-                            value2 = (state.userData.find { it.id == "money" }!!.value2.toInt() + 2000).toString()
-                        )
-                        postSideEffect(EnglishSideEffect.Toast("정답입니다 (달빛 +2000)"))
-                    } else {
-                        //보상
-                        userDao.update(
-                            id = "money",
-                            value2 = (state.userData.find { it.id == "money" }!!.value2.toInt() + 500).toString()
-                        )
-                        postSideEffect(EnglishSideEffect.Toast("정답입니다 (달빛 +500)"))
-                    }
+                    val hardReward = if (state.clickEnglishDataState == "어려움") REWARD_HARD_CORRECT else REWARD_HARD_NORMAL
+                    userDao.update(
+                        id = "money",
+                        value2 = (state.userData.find { it.id == "money" }!!.value2.toInt() + hardReward).toString()
+                    )
+                    postSideEffect(EnglishSideEffect.Toast("정답입니다 (달빛 +$hardReward)"))
 
                     englishDao.update(newClickEnglishData)
 
@@ -278,20 +211,12 @@ class EnglishViewModel @Inject constructor(
                     val newClickEnglishData = state.clickEnglishData
                     newClickEnglishData!!.state = "완료"
 
-                    if(state.clickEnglishDataState == "쉬움") {//보상
-                        userDao.update(
-                            id = "money",
-                            value2 = (state.userData.find { it.id == "money" }!!.value2.toInt() + 1000).toString()
-                        )
-                        postSideEffect(EnglishSideEffect.Toast("정답입니다 (달빛 +1000)"))
-                    } else {
-                        //보상
-                        userDao.update(
-                            id = "money",
-                            value2 = (state.userData.find { it.id == "money" }!!.value2.toInt() + 250).toString()
-                        )
-                        postSideEffect(EnglishSideEffect.Toast("정답입니다 (달빛 +250)"))
-                    }
+                    val easyReward = if (state.clickEnglishDataState == "쉬움") REWARD_EASY_CORRECT else REWARD_EASY_NORMAL
+                    userDao.update(
+                        id = "money",
+                        value2 = (state.userData.find { it.id == "money" }!!.value2.toInt() + easyReward).toString()
+                    )
+                    postSideEffect(EnglishSideEffect.Toast("정답입니다 (달빛 +$easyReward)"))
 
                     englishDao.update(newClickEnglishData)
 
@@ -420,33 +345,7 @@ class EnglishViewModel @Inject constructor(
 
     }
 
-    fun onAdClick() = intent {
-
-//        if(state.removeAd == "0") {
-//            postSideEffect(EnglishSideEffect.ShowRewardAd)
-//        } else {
-//            onRewardEarned()
-//        }
-
-    }
-
-//    fun showRewardAd(activity: Activity) {
-//        rewardAdManager.show(
-//            activity = activity,
-//            onReward = {
-//                onRewardEarned()
-//            },
-//            onNotReady = {
-//                intent {
-//                    postSideEffect(
-//                        EnglishSideEffect.Toast(
-//                            "광고를 불러오는 중이에요. 잠시 후 다시 시도해주세요."
-//                        )
-//                    )
-//                }
-//            }
-//        )
-//    }
+    fun onAdClick() = intent { }
 
     fun onSituationChange(situation: String) = intent {
 
