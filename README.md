@@ -20,7 +20,6 @@
 
 | 항목 | 수치 |
 |------|------|
-| 🏪 운영 기간 | Google Play Store 정식 출시 후 **1년 9개월** |
 | 📥 누적 다운로드 | **1,400+** |
 | ⭐ 사용자 평점 | **4.9+** (리뷰 100+) |
 | 🔄 업데이트 | 사용자 피드백 기반 지속적 업데이트 진행 중 |
@@ -101,7 +100,6 @@
 - OkHttp를 통한 REST API 호출, 응답 실패 시 폴백 메시지로 UX 보장
 
 ### 🚶 건강 관리
-- Samsung Health Connect 연동으로 걸음 수 실시간 측정
 - **Foreground Service** + 알림 채널로 백그라운드 상시 추적
 - 하루 5,000보 달성 시 인앱 재화 보상 지급
 - 주·월 단위 걸음 수 통계 차트 (YCharts) 제공
@@ -143,7 +141,7 @@
 | 분류 | 기술 |
 |------|------|
 | **언어** | Kotlin |
-| **UI** | Jetpack Compose, Material 3, Lottie |
+| **UI** | Jetpack Compose |
 | **아키텍처** | Clean Architecture, MVVM + MVI (Orbit) |
 | **비동기** | Kotlin Coroutines, Flow |
 | **로컬 DB** | Room Database (14 Entity, Migration v1→v4) |
@@ -153,10 +151,7 @@
 | **AI** | OpenAI GPT-3.5-turbo (OkHttp REST), Google Generative AI SDK |
 | **DI** | Dagger Hilt |
 | **백그라운드** | WorkManager, ForegroundService, AlarmManager, BootReceiver |
-| **헬스** | Samsung Health Connect |
-| **지도** | Kakao Maps SDK, Kakao REST API |
 | **이미지** | Coil, Firebase Storage |
-| **차트** | YCharts |
 
 ---
 
@@ -267,7 +262,6 @@ git clone https://github.com/a0100019/HaruVillage-Android-Official.git
    OPENAI_API_KEY=your_openai_key
    KAKAO_API_KEY=your_kakao_key
    ```
-4. Samsung Health Connect 앱이 기기에 설치되어 있어야 걸음 수 연동 가능
 5. **Run ▶️**
 
 > ⚠️ API 키가 없는 경우 AI 촌장 인사 및 걸음 수 기능은 동작하지 않지만, 나머지 기능은 정상 이용 가능합니다.
