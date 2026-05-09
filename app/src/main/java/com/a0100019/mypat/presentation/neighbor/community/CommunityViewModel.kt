@@ -290,13 +290,19 @@ class CommunityViewModel @Inject constructor(
 
     private fun loadAllRanks() = intent {
         try {
+            val firstGame = loadRankList("firstGame")
+            val secondGame = loadRankList("secondGame")
+            val thirdGameEasy = loadRankList("thirdGameEasy")
+            val thirdGameNormal = loadRankList("thirdGameNormal")
+            val thirdGameHard = loadRankList("thirdGameHard")
+
             reduce {
                 state.copy(
-                    firstGameRankList = loadRankList("firstGame"),
-                    secondGameRankList = loadRankList("secondGame"),
-                    thirdGameEasyRankList = loadRankList("thirdGameEasy"),
-                    thirdGameNormalRankList = loadRankList("thirdGameNormal"),
-                    thirdGameHardRankList = loadRankList("thirdGameHard"),
+                    firstGameRankList = firstGame,
+                    secondGameRankList = secondGame,
+                    thirdGameEasyRankList = thirdGameEasy,
+                    thirdGameNormalRankList = thirdGameNormal,
+                    thirdGameHardRankList = thirdGameHard,
                 )
             }
         } catch (e: Exception) {

@@ -34,14 +34,18 @@ import com.a0100019.mypat.presentation.neighbor.privateChat.PrivateChatInScreen
 import com.a0100019.mypat.presentation.neighbor.privateChat.PrivateRoomScreen
 import com.a0100019.mypat.presentation.activity.store.BillingManager
 import com.a0100019.mypat.presentation.main.first.FirstContainerScreen
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 @Composable
 fun MainNavHost(
     billingManager: BillingManager
 ) {
     val navController = rememberNavController()
-    //뷰모델 공유하고 싶으면 이렇게 하기
-    // val diaryViewModel: DiaryViewModel = hiltViewModel()
+
+    // MVVM 패턴: SharedViewModel로 화면 간 공유 상태 관리 (StateFlow)
+    val sharedViewModel: SharedViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,

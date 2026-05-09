@@ -127,26 +127,22 @@ class BoardViewModel @Inject constructor(
 
     fun loadBoardMessages() = intent {
         val currentPage = state.page
-        val myTag = userDao.getAllUserData()
-            .find { it.id == "auth" }
-            ?.value2
-            ?: return@intent
 
         val boardRef = Firebase.firestore
             .collection("chatting")
             .document("board")
             .collection("board")
 
-        // 기본 쿼리 설정
+        // 기본 쿼리 설정 (문서ID = timestamp, 내림차순 = 최신순)
         var query = boardRef
             .orderBy(FieldPath.documentId(), Query.Direction.DESCENDING)
             .limit(10)
 
-        // 1️⃣ 페이지가 1보다 크면, 현재 리스트의 마지막 아이템 이후부터 가져옴
+        // 페이지가 1보다 크면, 현재 리스트에서 가장 오래된(작은) timestamp 이후부터 가져옴
         if (currentPage > 1 && state.boardMessages.isNotEmpty()) {
-            // 마지막 메시지의 timestamp(문서 ID)를 기준으로 커서 설정
-            val lastMessageId = state.boardMessages.first().timestamp.toString() // 내림차순이므로 가장 작은(오래된) 값
-            query = query.startAfter(lastMessageId)
+            // 오름차순 정렬된 리스트에서 first()가 가장 오래된 글
+            val oldestMessageId = state.boardMessages.first().timestamp.toString()
+            query = query.startAfter(oldestMessageId)
         }
 
         query.get().addOnSuccessListener { snapshot ->
@@ -156,15 +152,25 @@ class BoardViewModel @Inject constructor(
 
                 if (data["ban"] == "1") return@mapNotNull null
 
+                val anonymous = data["anonymous"] as? String ?: "0"
+                val rawName = data["name"] as? String ?: ""
+
+                // 익명 게시글이면 "익명"으로, 이름이 비어있으면 "알수없음"
+                val displayName = when {
+                    anonymous == "1" -> "익명"
+                    rawName.isEmpty() -> "알수없음"
+                    else -> rawName
+                }
+
                 BoardMessage(
                     timestamp = timestamp,
                     message = data["message"] as? String ?: "",
-                    name = data["name"] as? String ?: "알수없음",
+                    name = displayName,
                     tag = data["tag"] as? String ?: "",
                     ban = "0",
                     uid = data["uid"] as? String ?: "",
                     type = data["type"] as? String ?: "free",
-                    anonymous = data["anonymous"] as? String ?: "0",
+                    anonymous = anonymous,
                     answerCount = (data["answer"] as? Map<*, *>)?.size ?: 0,
                     photoFirebaseUrl = data["photoFirebaseUrl"] as? String ?: "0",
                     photoLocalPath = data["photoLocalPath"] as? String ?: "0",
@@ -172,15 +178,12 @@ class BoardViewModel @Inject constructor(
                 )
             }.sortedBy { it.timestamp } // 화면 표시를 위해 오름차순 정렬
 
-            // 2️⃣ 내 게시글은 중복 과금을 막기 위해 전체 글 쿼리가 끝난 후 합치거나 별도 관리
-            // (페이지네이션 시 매번 내 글 전체를 새로 고침할지 결정이 필요합니다)
-
             intent {
                 reduce {
                     val updatedList = if (currentPage == 1) {
                         newBoardMessages // 1페이지면 새로 시작
                     } else {
-                        //  중요: 새 데이터(더 과거)를 '앞'에 추가
+                        // 새 데이터(더 과거)를 '앞'에 추가
                         newBoardMessages + state.boardMessages
                     }
 

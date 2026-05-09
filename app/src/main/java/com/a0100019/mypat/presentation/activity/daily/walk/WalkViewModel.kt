@@ -51,7 +51,7 @@ class WalkViewModel @Inject constructor(
         buildSettings = {
             this.exceptionHandler = CoroutineExceptionHandler { _, throwable ->
                 intent {
-                    Log.e("WalkViewModel", "Coroutine exception: ${throwable.message}")
+//                    Log.e("WalkViewModel", "Coroutine exception: ${throwable.message}")
                     postSideEffect(WalkSideEffect.Toast(message = throwable.message.orEmpty()))
                 }
             }

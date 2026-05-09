@@ -273,9 +273,8 @@ class BoardMessageViewModel @Inject constructor(
                         boardChat = sortedChat,
                     )
                 }
+                loadData()
             }
-
-            loadData()
         }
     }
 
