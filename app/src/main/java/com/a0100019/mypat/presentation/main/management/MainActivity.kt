@@ -1,6 +1,7 @@
 package com.a0100019.mypat.presentation.main.management
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.addCallback
@@ -35,6 +36,13 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var billingManager: BillingManager
+
+    // 시스템 글자 크기 설정 무시, 앱 글자 크기 고정
+    override fun attachBaseContext(newBase: Context) {
+        val config = Configuration(newBase.resources.configuration)
+        config.fontScale = 1.0f
+        super.attachBaseContext(newBase.createConfigurationContext(config))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

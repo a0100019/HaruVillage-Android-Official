@@ -347,14 +347,35 @@ class DiaryWriteViewModel @Inject constructor(
             val fileName = "haru_photo_${System.currentTimeMillis()}.jpg"
             val file = File(context.filesDir, fileName)
 
-            // 1. InputStream으로 비트맵 불러오기
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                val bitmap = BitmapFactory.decodeStream(inputStream)
+            // 1. EXIF 회전 정보 읽기
+            val rotation = context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val exif = androidx.exifinterface.media.ExifInterface(inputStream)
+                when (exif.getAttributeInt(
+                    androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL
+                )) {
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90 -> 90f
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_180 -> 180f
+                    androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_270 -> 270f
+                    else -> 0f
+                }
+            } ?: 0f
 
-                // 2. 파일 출력 스트림 준비
+            // 2. 비트맵 불러오기
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val originalBitmap = BitmapFactory.decodeStream(inputStream)
+
+                // 3. 회전 보정 적용
+                val bitmap = if (rotation != 0f) {
+                    val matrix = android.graphics.Matrix()
+                    matrix.postRotate(rotation)
+                    Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.width, originalBitmap.height, matrix, true)
+                } else {
+                    originalBitmap
+                }
+
+                // 4. 파일 출력 스트림 준비 + 압축
                 FileOutputStream(file).use { outputStream ->
-                    // 3. 압축하기 (JPEG, 품질 70~80% 권장)
-                    // 품질을 100에서 80으로만 낮춰도 용량이 획기적으로 줄어듭니다.
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
                 }
             }
